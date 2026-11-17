@@ -2,14 +2,15 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>班級 - 家長即時守護系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #E6F4F1; font-family: system-ui, -apple-system, sans-serif; color: #2F4F4F; }
-        .soft-card { background-color: #FFFFFF; border: 2px solid #A3D2CA; border-radius: 24px; box-shadow: 0 4px 12px rgba(47, 79, 79, 0.05); }
-        .soft-header { background-color: #F0F7F6; border-bottom: 2px solid #A3D2CA; border-top-left-radius: 22px; border-top-right-radius: 22px; }
+        body { background-color: #E6F4F1; font-family: system-ui, -apple-system, sans-serif; color: #2F4F4F; -webkit-tap-highlight-color: transparent; }
+        .soft-card { background-color: #FFFFFF; border: 2px solid #A3D2CA; border-radius: 20px; box-shadow: 0 4px 12px rgba(47, 79, 79, 0.05); }
+        .soft-header { background-color: #F0F7F6; border-bottom: 2px solid #A3D2CA; border-top-left-radius: 18px; border-top-right-radius: 18px; }
+        button, input { min-height: 44px; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -18,14 +19,14 @@
         <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <div class="bg-white/80 p-2 rounded-2xl text-[#2F4F4F] shadow-sm">
-                    <i class="fa-solid fa-fish-fins text-lg"></i>
+                    <i class="fa-solid fa-fish-fins text-base"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-base" id="header-child-name">載入中...</h1>
-                    <p class="text-xs text-[#E6F4F1]" id="header-className-display">班級載入中...</p>
+                    <h1 class="font-bold text-sm" id="header-child-name">載入中...</h1>
+                    <p class="text-[11px] text-[#E6F4F1]" id="header-className-display">班級載入中...</p>
                 </div>
             </div>
-            <button onclick="logout()" class="text-xs text-[#2F4F4F] bg-[#C8E6C9] hover:bg-[#A5D6A7] px-3.5 py-2 rounded-xl transition flex items-center gap-1 font-bold shadow-sm">
+            <button onclick="logout()" class="text-xs text-[#2F4F4F] bg-[#C8E6C9] hover:bg-[#A5D6A7] px-3 py-1.5 rounded-xl transition flex items-center gap-1 font-bold shadow-sm active:scale-95">
                 <i class="fa-solid fa-right-from-bracket"></i> 登出
             </button>
         </div>
@@ -34,7 +35,7 @@
     <main class="max-w-md mx-auto px-3 py-4 flex-grow w-full space-y-4">
 
         <!-- 登入畫面 -->
-        <section id="login-section" class="soft-card p-5 space-y-5 my-auto">
+        <section id="login-section" class="soft-card p-5 space-y-4 my-auto">
             <div class="text-center space-y-2">
                 <div class="w-14 h-14 bg-[#C8E6C9] text-[#2F4F4F] rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">
                     <i class="fa-solid fa-whale"></i>
@@ -46,13 +47,13 @@
             <form onsubmit="handleLogin(event)" class="space-y-3 text-sm">
                 <div>
                     <label class="block font-bold text-[#2F4F4F] mb-1 text-xs">學生學號</label>
-                    <input type="text" id="login-student-id" required placeholder="請輸入學生學號" class="w-full px-3.5 py-3 rounded-xl border-2 border-[#A3D2CA] bg-[#F0F7F6] text-sm focus:ring-2 focus:ring-[#598379] outline-none">
+                    <input type="text" id="login-student-id" required placeholder="請輸入學生學號" class="w-full px-4 py-3 rounded-xl border-2 border-[#A3D2CA] bg-[#F0F7F6] text-sm focus:ring-2 focus:ring-[#598379] outline-none font-medium">
                 </div>
                 <div class="flex items-center pt-1">
-                    <input type="checkbox" id="parent-remember-me" class="w-4 h-4 text-[#598379] rounded border-[#A3D2CA]">
+                    <input type="checkbox" id="parent-remember-me" class="w-5 h-5 text-[#598379] rounded border-[#A3D2CA]">
                     <label for="parent-remember-me" class="ml-2 text-[#2F4F4F] font-bold text-xs">記住我 (下次自動登入)</label>
                 </div>
-                <button type="submit" class="w-full bg-[#598379] hover:bg-[#4A6B63] text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
+                <button type="submit" class="w-full bg-[#598379] hover:bg-[#4A6B63] text-white font-bold py-3.5 rounded-xl shadow-md transition text-sm active:scale-95">
                     進入專屬小天地 🧸
                 </button>
             </form>
@@ -65,62 +66,65 @@
 
         <!-- 儀表板主畫面 -->
         <div id="dashboard-section" class="hidden space-y-4">
-            <div class="flex bg-[#D8E8E5] p-1 rounded-xl border-2 border-[#A3D2CA] text-xs">
-                <button onclick="switchTab('today')" id="tab-today" class="flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition">
+            <div class="flex bg-[#D8E8E5] p-1.5 rounded-xl border-2 border-[#A3D2CA] text-xs">
+                <button onclick="switchTab('today')" id="tab-today" class="flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition active:scale-95">
                     今日聯絡簿
                 </button>
-                <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-2 font-bold rounded-lg text-[#598379] transition">
+                <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-2 font-bold rounded-lg text-[#598379] transition active:scale-95">
                     歷史紀錄
                 </button>
-                <button onclick="switchTab('injury')" id="tab-injury" class="flex-1 py-2 font-bold rounded-lg text-[#598379] transition">
+                <button onclick="switchTab('injury')" id="tab-injury" class="flex-1 py-2 font-bold rounded-lg text-[#598379] transition active:scale-95">
                     傷病通知
                 </button>
             </div>
 
-            <!-- 第一頁：今日聯絡簿與作業 -->
+            <!-- 第一頁：今日聯絡簿與昨天作業繳交狀態 -->
             <div id="view-today" class="space-y-4">
                 
                 <!-- 當天聯絡簿內容與老師提醒 -->
                 <section class="soft-card p-4 space-y-3">
-                    <div class="soft-header px-3 py-2 flex justify-between items-center -mx-4 -mt-4 mb-2">
+                    <div class="soft-header px-3.5 py-2.5 flex justify-between items-center -mx-4 -mt-4 mb-2">
                         <h2 class="font-bold text-[#2F4F4F] text-xs flex items-center gap-1.5">
                             <i class="fa-solid fa-star text-amber-600"></i> 當天聯絡簿內容
                         </h2>
-                        <span class="text-[11px] text-[#2F4F4F] font-bold bg-[#C8E6C9] px-2.5 py-0.5 rounded-full shadow-sm" id="note-display-date">載入中...</span>
+                        <span class="text-[11px] text-[#2F4F4F] font-bold bg-[#C8E6C9] px-3 py-0.5 rounded-full shadow-sm" id="note-display-date">載入中...</span>
                     </div>
-                    <div class="bg-[#F0F7F6] p-3 rounded-xl border border-[#A3D2CA]">
+                    <div class="bg-[#F0F7F6] p-3.5 rounded-xl border border-[#A3D2CA]">
                         <p class="text-sm text-[#2F4F4F] whitespace-pre-line font-medium leading-relaxed" id="note-display-content">載入中...</p>
                     </div>
                     
-                    <div class="bg-[#FFF8E1] p-3 rounded-xl border border-[#FFE082] space-y-1">
+                    <div class="bg-[#FFF8E1] p-3.5 rounded-xl border border-[#FFE082] space-y-1">
                         <p class="text-[11px] font-bold text-[#8D6E63] flex items-center gap-1" id="note-teacher-label">
                             <i class="fa-solid fa-heart text-rose-500"></i> 老師提醒 / 給家長的話：
                         </p>
                         <p class="text-sm text-[#3E2723] font-medium leading-relaxed pl-3" id="note-display-message">尚無留言</p>
                     </div>
 
-                    <div class="flex items-center gap-2 text-xs text-[#2F4F4F] bg-[#E0F2F1] p-3 rounded-xl border border-[#B2DFDB]">
+                    <div class="flex items-center gap-2 text-xs text-[#2F4F4F] bg-[#E0F2F1] p-3.5 rounded-xl border border-[#B2DFDB]">
                         <i class="fa-solid fa-bell text-[#00897B] text-sm"></i>
                         <p class="text-xs"><span class="font-bold">叮嚀備註：</span><span id="note-display-reminder">載入中...</span></p>
                     </div>
                 </section>
 
-                <!-- 作業今天繳交狀態 -->
-                <section class="soft-card p-4 space-y-2.5">
-                    <h2 class="font-bold text-[#2F4F4F] text-xs flex items-center gap-1.5 border-b border-[#A3D2CA] pb-2">
-                        <i class="fa-solid fa-list-check text-[#598379]"></i> 作業繳交狀態核對
-                    </h2>
+                <!-- 昨天作業今天繳交狀態核對 -->
+                <section class="soft-card p-4 space-y-3">
+                    <div class="border-b border-[#A3D2CA] pb-2 flex justify-between items-center">
+                        <h2 class="font-bold text-[#2F4F4F] text-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-list-check text-[#598379]"></i> 昨天作業今天繳交狀態
+                        </h2>
+                        <span class="text-[10px] text-[#598379] font-bold" id="yesterday-date-label">(對應昨日聯絡簿)</span>
+                    </div>
                     <div class="space-y-2 text-xs" id="yesterday-homework-list">
-                        <p class="text-slate-400 text-center py-2">目前無作業狀態登記</p>
+                        <p class="text-slate-400 text-center py-2">昨日無登記作業狀態</p>
                     </div>
                 </section>
 
                 <!-- 需家長協助完成之作業 -->
-                <section class="soft-card p-4 space-y-2.5 bg-[#FFF9C4]/30 border-[#FFE082]">
+                <section class="soft-card p-4 space-y-3 bg-[#FFF9C4]/30 border-[#FFE082]">
                     <h2 class="font-bold text-[#5D4037] text-xs flex items-center gap-1.5 border-b border-[#FFE082] pb-2">
                         <i class="fa-solid fa-hands-holding-child text-amber-600"></i> 需家長協助完成之作業 / 個別事項
                     </h2>
-                    <div class="bg-white p-3 rounded-xl border border-[#FFE082] text-xs space-y-1" id="parent-assist-homework-list">
+                    <div class="bg-white p-3.5 rounded-xl border border-[#FFE082] text-xs space-y-1" id="parent-assist-homework-list">
                         <p class="text-slate-500 text-center py-1">目前無特別需家長協助之項目 ✨</p>
                     </div>
                 </section>
@@ -196,9 +200,6 @@
                 if (response.ok) {
                     const cloudResult = await response.json();
                     if (cloudResult && cloudResult.record) {
-                        if (cloudResult.record.notesList && Array.isArray(cloudResult.record.notesList)) {
-                            sortNotesByDate(cloudResult.record.notesList);
-                        }
                         localStorage.setItem('ncm309_school_data', JSON.stringify(cloudResult.record));
                     }
                 }
@@ -212,26 +213,6 @@
             return fetch(`${url}${separator}_t=${new Date().getTime()}`, {
                 headers: { 'X-Master-Key': '$2a$10$95bW31HqL48Jb8Q5Vf3d1eK7n9bW31HqL48Jb8Q5Vf3d1eK7n9bW3' }
             });
-        }
-
-        function sortNotesByDate(notesList) {
-            notesList.sort((a, b) => {
-                const dateA = parseDateStringForSorting(a.date);
-                const dateB = parseDateStringForSorting(b.date);
-                return dateB - dateA;
-            });
-        }
-
-        function parseDateStringForSorting(dateStr) {
-            if (!dateStr) return 0;
-            const match = dateStr.match(/(?:民國\s*(\d+)\s*年)?\s*(\d+)\s*月\s*(\d+)\s*日/);
-            if (match) {
-                let year = match[1] ? parseInt(match[1]) + 1911 : new Date().getFullYear();
-                let month = parseInt(match[2]) - 1;
-                let day = parseInt(match[3]);
-                return new Date(year, month, day).getTime();
-            }
-            return new Date(dateStr).getTime() || 0;
         }
 
         function getSystemData() {
@@ -248,8 +229,6 @@
                 if (!parsed.classInfo) parsed.classInfo = freshData.classInfo;
                 if (!parsed.notesList || parsed.notesList.length === 0) {
                     parsed.notesList = freshData.notesList;
-                } else {
-                    sortNotesByDate(parsed.notesList);
                 }
                 if (!parsed.activeNoteId && parsed.notesList.length > 0) {
                     parsed.activeNoteId = parsed.notesList[0].id;
@@ -261,22 +240,6 @@
             } catch (e) {
                 return freshData;
             }
-        }
-
-        function getTaiwanTaipeiDateString() {
-            const now = new Date();
-            const options = { timeZone: 'Asia/Taipei', year: 'numeric', month: 'numeric', day: 'numeric', weekday: 'long' };
-            const formatter = new Intl.DateTimeFormat('zh-TW', options);
-            const parts = formatter.formatToParts(now);
-            
-            let year = '', month = '', day = '', weekday = '';
-            parts.forEach(part => {
-                if (part.type === 'year') year = parseInt(part.value) - 1911;
-                if (part.type === 'month') month = part.value;
-                if (part.type === 'day') day = part.value;
-                if (part.type === 'weekday') weekday = part.value;
-            });
-            return `民國 ${year} 年 ${month} 月 ${day} 日 (${weekday})`;
         }
 
         function generateDefaultData() {
@@ -291,7 +254,7 @@
             const defaultId = new Date().toISOString();
             const defaultNotesList = [{
                 id: defaultId,
-                date: getTaiwanTaipeiDateString(),
+                date: "民國 115 年 11 月 9 日 (星期一)",
                 content: "1. 國文習作第 4 課完成\n2. 數學隨堂練習卷",
                 parentMessage: "本週三有戶外教學。",
                 reminder: "帶外套。"
@@ -339,8 +302,11 @@
         }
 
         function renderDashboard(student, systemData) {
-            sortNotesByDate(systemData.notesList);
+            // 當前顯示的聯絡簿
             let activeNote = systemData.notesList.find(n => n.id === systemData.activeNoteId) || systemData.notesList[0] || null;
+            // 昨天/上一篇聯絡簿（用於對應作業繳交狀態）
+            let activeNoteIndex = systemData.notesList.findIndex(n => n.id === (activeNote ? activeNote.id : ''));
+            let yesterdayNote = (activeNoteIndex !== -1 && systemData.notesList[activeNoteIndex + 1]) ? systemData.notesList[activeNoteIndex + 1] : activeNote;
 
             if (activeNote) {
                 document.getElementById('note-display-date').innerText = activeNote.date;
@@ -358,33 +324,35 @@
                 "1": { text: "繳交", color: "bg-[#C8E6C9] text-[#1B5E20] border-[#A5D6A7]" },
                 "2": { text: "已補交", color: "bg-[#BBDEFB] text-[#0D47A1] border-[#90CAF9]" },
                 "3": { text: "未完成", color: "bg-[#FFE082] text-[#5D4037] border-[#FFD54F]" },
-                "4": { text: "需訂正、補交", color: "bg-[#FFCDD2] text-[#B71C1C] border-[#EF9A9A]" },
+                "4": { text: "需訂正", color: "bg-[#FFCDD2] text-[#B71C1C] border-[#EF9A9A]" },
                 "5": { text: "未帶回家", color: "bg-[#E1BEE7] text-[#4A148C] border-[#CE93D8]" },
-                "6": { text: "未帶到學校", color: "bg-[#FFE0B2] text-[#E65100] border-[#FFCC80]" }
+                "6": { text: "未帶到校", color: "bg-[#FFE0B2] text-[#E65100] border-[#FFCC80]" }
             };
 
             const yesterdayHwContainer = document.getElementById('yesterday-homework-list');
             yesterdayHwContainer.innerHTML = '';
-            if (activeNote && activeNote.content) {
-                const yestHwLines = activeNote.content.split('\n').filter(line => line.trim() !== '');
-                const yestStudentStatus = (student.homeworkStatus && student.homeworkStatus[activeNote.id]) || {};
+            
+            if (yesterdayNote && yesterdayNote.content) {
+                document.getElementById('yesterday-date-label').innerText = `(${yesterdayNote.date} 交代之作業)`;
+                const yestHwLines = yesterdayNote.content.split('\n').filter(line => line.trim() !== '');
+                const yestStudentStatus = (student.homeworkStatus && student.homeworkStatus[yesterdayNote.id]) || {};
 
                 if (yestHwLines.length === 0) {
-                    yesterdayHwContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">本日無作業登記</p>`;
+                    yesterdayHwContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">昨日無作業登記</p>`;
                 } else {
                     yestHwLines.forEach((line, idx) => {
                         const statusKey = yestStudentStatus[idx] || "1";
                         const s = statusMap[statusKey] || statusMap["1"];
                         yesterdayHwContainer.innerHTML += `
                             <div class="flex items-center justify-between p-3 rounded-xl bg-[#F0F7F6] border border-[#A3D2CA] text-xs">
-                                <span class="font-bold text-[#2F4F4F]">${line}</span>
-                                <span class="px-3 py-0.5 rounded-full font-bold border ${s.color}">${s.text}</span>
+                                <span class="font-bold text-[#2F4F4F] truncate max-w-[200px]">${line}</span>
+                                <span class="px-3 py-1 rounded-full font-bold border ${s.color} text-[11px] whitespace-nowrap">${s.text}</span>
                             </div>
                         `;
                     });
                 }
             } else {
-                yesterdayHwContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">本日無作業狀態追蹤</p>`;
+                yesterdayHwContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">昨日無作業狀態追蹤</p>`;
             }
 
             const parentAssistContainer = document.getElementById('parent-assist-homework-list');
@@ -392,7 +360,7 @@
             
             if (student.parentAssist && student.parentAssist.trim() !== '') {
                 parentAssistContainer.innerHTML = `
-                    <div class="p-3 bg-[#FFF9C4] rounded-xl border border-[#FFE082] text-xs space-y-1">
+                    <div class="p-3.5 bg-[#FFF9C4] rounded-xl border border-[#FFE082] text-xs space-y-1">
                         <span class="font-bold text-[#5D4037]"><i class="fa-solid fa-hands-holding-child mr-1"></i> 老師給家長的個別協助事項：</span>
                         <p class="text-[#3E2723] whitespace-pre-line mt-1 pl-3 font-medium">${student.parentAssist}</p>
                     </div>
@@ -456,7 +424,7 @@
                                     ${isConfirmed ? '已於 ' + inj.confirmTime + ' 確認收到' : '等待家長確認'}
                                 </span>
                                 ${!isConfirmed ? `
-                                    <button onclick="confirmInjury(${index})" class="bg-[#598379] hover:bg-[#4A6B63] text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition text-[11px]">
+                                    <button onclick="confirmInjury(${index})" class="bg-[#598379] hover:bg-[#4A6B63] text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition text-[11px] active:scale-95">
                                         確認已收到 💛
                                     </button>
                                 ` : `
@@ -509,9 +477,9 @@
         }
 
         function switchTab(tab) {
-            document.getElementById('tab-today').className = tab === 'today' ? "flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 font-bold rounded-lg text-[#598379] transition";
-            document.getElementById('tab-history').className = tab === 'history' ? "flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 font-bold rounded-lg text-[#598379] transition";
-            document.getElementById('tab-injury').className = tab === 'injury' ? "flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 font-bold rounded-lg text-[#598379] transition";
+            document.getElementById('tab-today').className = tab === 'today' ? "flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition active:scale-95" : "flex-1 py-2 font-bold rounded-lg text-[#598379] transition active:scale-95";
+            document.getElementById('tab-history').className = tab === 'history' ? "flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition active:scale-95" : "flex-1 py-2 font-bold rounded-lg text-[#598379] transition active:scale-95";
+            document.getElementById('tab-injury').className = tab === 'injury' ? "flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition active:scale-95" : "flex-1 py-2 font-bold rounded-lg text-[#598379] transition active:scale-95";
 
             document.getElementById('view-today').classList.toggle('hidden', tab !== 'today');
             document.getElementById('view-history').classList.toggle('hidden', tab !== 'history');
