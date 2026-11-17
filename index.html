@@ -105,16 +105,6 @@
                     </div>
                 </section>
 
-                <!-- 昨天聯絡簿內容 -->
-                <section class="soft-card p-5 space-y-3">
-                    <h2 class="font-bold text-[#2F4F4F] text-sm flex items-center gap-2 border-b border-[#A3D2CA] pb-2">
-                        <i class="fa-solid fa-clock-rotate-left text-[#598379]"></i> 昨天聯絡簿內容
-                    </h2>
-                    <div class="bg-[#F0F7F6] p-4 rounded-2xl border border-[#A3D2CA] text-sm" id="yesterday-note-content">
-                        <p class="text-xs text-slate-400 text-center py-2">昨日無上一個聯絡簿紀錄</p>
-                    </div>
-                </section>
-
                 <!-- 昨天作業今天繳交狀態 -->
                 <section class="soft-card p-5 space-y-3">
                     <h2 class="font-bold text-[#2F4F4F] text-sm flex items-center gap-2 border-b border-[#A3D2CA] pb-2">
@@ -141,7 +131,7 @@
             <div id="view-history" class="space-y-6 hidden">
                 <section class="soft-card p-5 space-y-4">
                     <h2 class="font-bold text-[#2F4F4F] text-sm flex items-center gap-2 border-b border-[#A3D2CA] pb-2">
-                        <i class="fa-solid fa-box-archive text-[#598379]"></i> 歷史聯絡簿完整總覽（依您打的日期排序）
+                        <i class="fa-solid fa-box-archive text-[#598379]"></i> 歷史聯絡簿完整總覽（隨時翻閱）
                     </h2>
                     <div class="space-y-3 max-h-96 overflow-y-auto pr-1" id="all-history-notes-container"></div>
                 </section>
@@ -206,9 +196,6 @@
                 if (response.ok) {
                     const cloudResult = await response.json();
                     if (cloudResult && cloudResult.record) {
-                        if (cloudResult.record.notesList && Array.isArray(cloudResult.record.notesList)) {
-                            sortNotesByDate(cloudResult.record.notesList);
-                        }
                         localStorage.setItem('ncm309_school_data', JSON.stringify(cloudResult.record));
                     }
                 }
@@ -222,27 +209,6 @@
             return fetch(`${url}${separator}_t=${new Date().getTime()}`, {
                 headers: { 'X-Master-Key': '$2a$10$95bW31HqL48Jb8Q5Vf3d1eK7n9bW31HqL48Jb8Q5Vf3d1eK7n9bW3' }
             });
-        }
-
-        // 依據您打的日期字串進行解析並由新到舊排序
-        function sortNotesByDate(notesList) {
-            notesList.sort((a, b) => {
-                const dateA = parseDateStringForSorting(a.date);
-                const dateB = parseDateStringForSorting(b.date);
-                return dateB - dateA; // 新的日期排在前面
-            });
-        }
-
-        function parseDateStringForSorting(dateStr) {
-            if (!dateStr) return 0;
-            const match = dateStr.match(/(?:民國\s*(\d+)\s*年)?\s*(\d+)\s*月\s*(\d+)\s*日/);
-            if (match) {
-                let year = match[1] ? parseInt(match[1]) + 1911 : new Date().getFullYear();
-                let month = parseInt(match[2]) - 1;
-                let day = parseInt(match[3]);
-                return new Date(year, month, day).getTime();
-            }
-            return new Date(dateStr).getTime() || 0;
         }
 
         function getSystemData() {
@@ -259,8 +225,9 @@
                 if (!parsed.classInfo) parsed.classInfo = freshData.classInfo;
                 if (!parsed.notesList || parsed.notesList.length === 0) {
                     parsed.notesList = freshData.notesList;
-                } else {
-                    sortNotesByDate(parsed.notesList);
+                }
+                if (!parsed.activeNoteId && parsed.notesList.length > 0) {
+                    parsed.activeNoteId = parsed.notesList[0].id;
                 }
                 if (!parsed.students || Object.keys(parsed.students).length < 25) {
                     parsed.students = freshData.students;
@@ -305,7 +272,7 @@
                 reminder: "帶外套。"
             }];
 
-            return { students: students, classInfo: { schoolName: "崇明國小", className: "三年九班", teacherName: "陽芯妮" }, notesList: defaultNotesList };
+            return { students: students, classInfo: { schoolName: "崇明國小", className: "三年九班", teacherName: "陽芯妮" }, notesList: defaultNotesList, activeNoteId: defaultId };
         }
 
         let currentStudentId = null;
@@ -347,9 +314,8 @@
         }
 
         function renderDashboard(student, systemData) {
-            sortNotesByDate(systemData.notesList);
-            const activeNote = systemData.notesList[0] || null;
-            const yesterdayNote = systemData.notesList[1] || null;
+            // 抓取老師在後台指定的當天聯絡簿
+            let activeNote = systemData.notesList.find(n => n.id === systemData.activeNoteId) || systemData.notesList[0] || null;
 
             if (activeNote) {
                 document.getElementById('note-display-date').innerText = activeNote.date;
@@ -363,17 +329,6 @@
                 document.getElementById('note-display-reminder').innerText = "無";
             }
 
-            const yesterdayContainer = document.getElementById('yesterday-note-content');
-            if (yesterdayNote) {
-                yesterdayContainer.innerHTML = `
-                    <p class="font-bold text-[#2F4F4F] text-sm mb-1">📅 ${yesterdayNote.date}</p>
-                    <p class="text-sm text-[#2F4F4F] whitespace-pre-line font-medium">${yesterdayNote.content}</p>
-                    ${yesterdayNote.parentMessage ? `<p class="text-sm text-[#2F4F4F] mt-2 bg-[#E0F2F1] p-2.5 rounded-xl font-medium">老師的話：${yesterdayNote.parentMessage}</p>` : ''}
-                `;
-            } else {
-                yesterdayContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">昨日無上一個聯絡簿紀錄</p>`;
-            }
-
             const statusMap = {
                 "1": { text: "繳交", color: "bg-[#C8E6C9] text-[#1B5E20] border-[#A5D6A7]" },
                 "2": { text: "已補交", color: "bg-[#BBDEFB] text-[#0D47A1] border-[#90CAF9]" },
@@ -385,12 +340,12 @@
 
             const yesterdayHwContainer = document.getElementById('yesterday-homework-list');
             yesterdayHwContainer.innerHTML = '';
-            if (yesterdayNote && yesterdayNote.content) {
-                const yestHwLines = yesterdayNote.content.split('\n').filter(line => line.trim() !== '');
-                const yestStudentStatus = (student.homeworkStatus && student.homeworkStatus[yesterdayNote.id]) || {};
+            if (activeNote && activeNote.content) {
+                const yestHwLines = activeNote.content.split('\n').filter(line => line.trim() !== '');
+                const yestStudentStatus = (student.homeworkStatus && student.homeworkStatus[activeNote.id]) || {};
 
                 if (yestHwLines.length === 0) {
-                    yesterdayHwContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">昨日無登記作業</p>`;
+                    yesterdayHwContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">本日無作業登記</p>`;
                 } else {
                     yestHwLines.forEach((line, idx) => {
                         const statusKey = yestStudentStatus[idx] || "1";
@@ -404,7 +359,7 @@
                     });
                 }
             } else {
-                yesterdayHwContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">昨日無作業狀態追蹤</p>`;
+                yesterdayHwContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">本日無作業狀態追蹤</p>`;
             }
 
             const parentAssistContainer = document.getElementById('parent-assist-homework-list');
@@ -427,9 +382,13 @@
                 historyNotesContainer.innerHTML = `<p class="text-center text-xs text-slate-400 py-3">尚無歷史聯絡簿紀錄</p>`;
             } else {
                 systemData.notesList.forEach(note => {
+                    const isCurrent = note.id === systemData.activeNoteId;
                     historyNotesContainer.innerHTML += `
-                        <div class="p-4 bg-[#F0F7F6] rounded-2xl border border-[#A3D2CA] text-sm space-y-1.5">
-                            <p class="font-bold text-[#2F4F4F]"><i class="fa-solid fa-calendar-days mr-1 text-[#598379]"></i> ${note.date}</p>
+                        <div class="p-4 ${isCurrent ? 'bg-[#D8E8E5] border-[#598379]' : 'bg-[#F0F7F6] border-[#A3D2CA]'} rounded-2xl border text-sm space-y-1.5">
+                            <p class="font-bold text-[#2F4F4F] flex justify-between items-center">
+                                <span><i class="fa-solid fa-calendar-days mr-1 text-[#598379]"></i> ${note.date}</span>
+                                ${isCurrent ? '<span class="text-xs bg-[#598379] text-white px-2 py-0.5 rounded-full">當前顯示中</span>' : ''}
+                            </p>
                             <p class="text-slate-800 whitespace-pre-line font-medium">${note.content}</p>
                             ${note.parentMessage ? `<p class="text-[#2F4F4F] bg-[#E0F2F1] p-2.5 rounded-xl mt-1 font-medium">老師的話：${note.parentMessage}</p>` : ''}
                             ${note.reminder ? `<p class="text-[#00897B] bg-[#E0F2F1] p-2 rounded-xl mt-1 font-medium">叮嚀備註：${note.reminder}</p>` : ''}
