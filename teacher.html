@@ -77,10 +77,10 @@
                 <button onclick="switchTab('settings')" id="tab-settings" class="flex-1 py-2 font-bold rounded-lg text-[#598379] transition whitespace-nowrap px-3"><i class="fa-solid fa-gear mr-1"></i>班級設定</button>
             </div>
 
-            <!-- 1. 昨天作業繳交狀態管理 -->
+            <!-- 1. 作業狀態管理 -->
             <div id="section-homework" class="soft-card p-4 space-y-3">
                 <div class="soft-header px-3 py-2 flex justify-between items-center -mx-4 -mt-4 mb-2">
-                    <h2 class="font-bold text-[#2F4F4F] text-xs"><i class="fa-solid fa-list-check text-[#598379] mr-1"></i>登記「昨天作業」繳交狀態</h2>
+                    <h2 class="font-bold text-[#2F4F4F] text-xs"><i class="fa-solid fa-list-check text-[#598379] mr-1"></i>登記「作業」繳交狀態</h2>
                     <span id="hw-current-date-tag" class="text-[11px] bg-[#C8E6C9] text-[#2F4F4F] px-2.5 py-0.5 rounded-full font-bold shadow-sm">載入中...</span>
                 </div>
                 <div class="overflow-x-auto">
@@ -107,8 +107,8 @@
                     
                     <div class="space-y-2.5 text-xs">
                         <div>
-                            <label class="block font-bold text-[#2F4F4F] mb-1">📅 自訂聯絡簿日期</label>
-                            <input type="text" id="note-date" class="w-full px-3 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs" placeholder="民國 115 年 11 月 6 日 (星期五)">
+                            <label class="block font-bold text-[#2F4F4F] mb-1">📅 自訂聯絡簿日期（例如：民國 115 年 11 月 9 日 (星期一)）</label>
+                            <input type="text" id="note-date" class="w-full px-3 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs" placeholder="民國 115 年 11 月 9 日 (星期一)">
                         </div>
                         <div>
                             <label class="block font-bold text-[#2F4F4F] mb-1">聯絡簿抄寫內容（每行一項作業）</label>
@@ -144,7 +144,7 @@
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block font-bold text-[#2F4F4F] mb-1">發生時間</label>
-                                <input type="text" id="inj-time" required value="上午 10:15" class="w-full px-3 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs">
+                                <input type="text" id="inj-time" required value="上午 10:15" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs">
                             </div>
                             <div>
                                 <label class="block font-bold text-[#2F4F4F] mb-1">處理人員</label>
@@ -156,17 +156,17 @@
                         </div>
                         <div>
                             <label class="block font-bold text-[#2F4F4F] mb-1">發生地點</label>
-                            <input type="text" id="inj-location" required value="下課遊樂場" class="w-full px-3 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs">
+                            <input type="text" id="inj-location" required value="下課遊樂場" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs">
                         </div>
                         <div>
                             <label class="block font-bold text-[#2F4F4F] mb-1">受傷症狀</label>
-                            <input type="text" id="inj-symptom" required value="右膝擦傷" class="w-full px-3 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs">
+                            <input type="text" id="inj-symptom" required value="右膝擦傷" class="w-full px-3.5 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs">
                         </div>
                         <div>
                             <label class="block font-bold text-[#2F4F4F] mb-1">處理經過</label>
-                            <textarea id="inj-treatment" rows="2" required class="w-full px-3 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs">生理食鹽水清洗，擦優碘貼人工皮。</textarea>
+                            <textarea id="inj-treatment" rows="2" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs">生理食鹽水清洗，擦優碘貼人工皮。</textarea>
                         </div>
-                        <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 rounded-xl shadow-md transition text-xs">發送傷病通知單 🩹</button>
+                        <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 rounded-xl shadow-sm transition text-xs">發送傷病通知單 🩹</button>
                     </form>
                 </div>
 
