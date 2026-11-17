@@ -58,7 +58,7 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-base" id="teacher-header-title">班級 • 教師溫馨後台</h1>
-                        <p class="text-xs text-[#E6F4F1]">作業與個別協助事項追蹤系統</p>
+                        <p class="text-xs text-[#E6F4F1]">昨天作業繳交狀態與個別協助追蹤系統</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
@@ -71,16 +71,16 @@
 
         <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
             <div class="flex bg-[#D8E8E5] p-1.5 rounded-2xl max-w-2xl mx-auto overflow-x-auto border-2 border-[#A3D2CA]">
-                <button onclick="switchTab('homework')" id="tab-homework" class="flex-1 py-2.5 text-xs font-bold rounded-xl bg-white text-[#2F4F4F] shadow-sm transition whitespace-nowrap px-4">作業與個別協助</button>
+                <button onclick="switchTab('homework')" id="tab-homework" class="flex-1 py-2.5 text-xs font-bold rounded-xl bg-white text-[#2F4F4F] shadow-sm transition whitespace-nowrap px-4">昨天作業繳交狀態</button>
                 <button onclick="switchTab('note')" id="tab-note" class="flex-1 py-2.5 text-xs font-bold rounded-xl text-[#598379] transition whitespace-nowrap px-4">聯絡簿管理</button>
                 <button onclick="switchTab('injury')" id="tab-injury" class="flex-1 py-2.5 text-xs font-bold rounded-xl text-[#598379] transition whitespace-nowrap px-4">傷病通知</button>
                 <button onclick="switchTab('settings')" id="tab-settings" class="flex-1 py-2.5 text-xs font-bold rounded-xl text-[#598379] transition whitespace-nowrap px-4"><i class="fa-solid fa-gear mr-1"></i>班級設定</button>
             </div>
 
-            <!-- 1. 作業與個別協助管理 -->
+            <!-- 1. 昨天作業繳交狀態與個別協助管理 -->
             <div id="section-homework" class="soft-card p-5 space-y-4">
                 <div class="soft-header px-4 py-2.5 flex justify-between items-center -mx-5 -mt-5 mb-3">
-                    <h2 class="font-bold text-[#2F4F4F] text-sm"><i class="fa-solid fa-list-check text-[#598379] mr-2"></i>全班作業狀態與個別家長協助事項填寫</h2>
+                    <h2 class="font-bold text-[#2F4F4F] text-sm"><i class="fa-solid fa-list-check text-[#598379] mr-2"></i>登記「昨天作業」今日到校繳交狀態</h2>
                     <span id="hw-current-date-tag" class="text-xs bg-[#C8E6C9] text-[#2F4F4F] px-3.5 py-1 rounded-full font-bold shadow-sm">載入中...</span>
                 </div>
                 <div class="overflow-x-auto">
@@ -460,14 +460,15 @@
             document.getElementById('setting-classname').value = cInfo.className;
             document.getElementById('setting-teacher').value = cInfo.teacherName;
 
-            let activeNote = systemData.notesList[0] || null;
-            document.getElementById('hw-current-date-tag').innerText = `目前檢視：${activeNote ? activeNote.date : '無'}`;
+            // 抓取「昨天/上一篇」聯絡簿作為作業登記區的依據
+            let yesterdayNote = systemData.notesList[1] || systemData.notesList[0] || null;
+            document.getElementById('hw-current-date-tag').innerText = `登記目標：${yesterdayNote ? yesterdayNote.date + ' 的作業' : '無'}`;
 
-            const hwLines = activeNote && activeNote.content ? activeNote.content.split('\n').filter(line => line.trim() !== '') : [];
+            const hwLines = yesterdayNote && yesterdayNote.content ? yesterdayNote.content.split('\n').filter(line => line.trim() !== '') : [];
             const thead = document.getElementById('teacher-homework-thead');
             let theadHtml = `<th class="p-3">座號 / 姓名</th>`;
             if (hwLines.length === 0) {
-                theadHtml += `<th class="p-3 text-slate-400">尚無作業項目</th>`;
+                theadHtml += `<th class="p-3 text-slate-400">尚無昨日作業項目</th>`;
             } else {
                 hwLines.forEach(line => {
                     theadHtml += `<th class="p-3">${line}</th>`;
@@ -498,13 +499,14 @@
                     rowHtml += `<td class="p-3 text-slate-400">-</td>`;
                 } else {
                     if (!student.homeworkStatus) student.homeworkStatus = {};
-                    if (!student.homeworkStatus[activeNote.id]) student.homeworkStatus[activeNote.id] = {};
+                    const noteIdToUse = yesterdayNote ? yesterdayNote.id : 'default';
+                    if (!student.homeworkStatus[noteIdToUse]) student.homeworkStatus[noteIdToUse] = {};
 
                     hwLines.forEach((line, index) => {
-                        const currentStatus = student.homeworkStatus[activeNote.id][index] || "1";
+                        const currentStatus = student.homeworkStatus[noteIdToUse][index] || "1";
                         rowHtml += `
                             <td class="p-3">
-                                <select onchange="updateHomework('${id}', '${activeNote.id}', ${index}, this.value)" class="px-3 py-2 rounded-xl border border-[#A3D2CA] bg-white text-sm font-bold text-[#2F4F4F] focus:ring-2 focus:ring-[#598379]">
+                                <select onchange="updateHomework('${id}', '${noteIdToUse}', ${index}, this.value)" class="px-3 py-2 rounded-xl border border-[#A3D2CA] bg-white text-sm font-bold text-[#2F4F4F] focus:ring-2 focus:ring-[#598379]">
                                     <option value="1" ${currentStatus === '1' ? 'selected' : ''}>1. 繳交</option>
                                     <option value="2" ${currentStatus === '2' ? 'selected' : ''}>2. 已補交</option>
                                     <option value="3" ${currentStatus === '3' ? 'selected' : ''}>3. 未完成</option>
@@ -524,10 +526,11 @@
                     </td>
                 `;
 
+                const quickNoteId = yesterdayNote ? yesterdayNote.id : 'default';
                 rowHtml += `
                     <td class="p-3 text-center space-x-1 whitespace-nowrap">
-                        <button onclick="setAllStatusForStudent('${id}', '${activeNote.id}', ${hwLines.length}, '1')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm transition">全部繳交</button>
-                        <button onclick="setAllStatusForStudent('${id}', '${activeNote.id}', ${hwLines.length}, '3')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm transition">全部未繳交</button>
+                        <button onclick="setAllStatusForStudent('${id}', '${quickNoteId}', ${hwLines.length}, '1')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm transition">全部繳交</button>
+                        <button onclick="setAllStatusForStudent('${id}', '${quickNoteId}', ${hwLines.length}, '3')" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm transition">全部未繳交</button>
                     </td>
                 `;
 
@@ -646,7 +649,7 @@
 
         async function setAllStatusForStudent(studentId, noteId, totalHwCount, targetStatus) {
             if (totalHwCount === 0) {
-                alert("目前沒有作業項目可供設定！");
+                alert("目前沒有昨天作業項目可供設定！");
                 return;
             }
             const systemData = getSystemData();
@@ -725,7 +728,7 @@
 
             const updatedNoteData = {
                 id: new Date().toISOString(),
-                date: rawDateVal, // 直接使用您打的日期文字
+                date: rawDateVal,
                 content: contentVal,
                 parentMessage: document.getElementById('note-parent-message').value,
                 reminder: document.getElementById('note-reminder').value
@@ -735,7 +738,7 @@
             sortNotesByDate(systemData.notesList);
             
             await saveSystemData(systemData);
-            alert(`聯絡簿已成功發布與雲端同步！已依照您輸入的日期排序。`);
+            alert(`聯絡簿已成功發布與雲端同步！`);
             loadTeacherData();
         }
 
@@ -745,7 +748,7 @@
             const id = document.getElementById('new-id').value.trim();
 
             if (!seat || !name || !id) {
-                alert("請完整填寫座號、姓名與學號！");
+                alert("請完整填寫座號、學生姓名與學號！");
                 return;
             }
 
