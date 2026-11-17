@@ -141,7 +141,7 @@
             <div id="view-history" class="space-y-6 hidden">
                 <section class="soft-card p-5 space-y-4">
                     <h2 class="font-bold text-[#2F4F4F] text-sm flex items-center gap-2 border-b border-[#A3D2CA] pb-2">
-                        <i class="fa-solid fa-box-archive text-[#598379]"></i> 歷史聯絡簿完整總覽（隨時翻閱）
+                        <i class="fa-solid fa-box-archive text-[#598379]"></i> 歷史聯絡簿完整總覽（依您打的日期排序）
                     </h2>
                     <div class="space-y-3 max-h-96 overflow-y-auto pr-1" id="all-history-notes-container"></div>
                 </section>
@@ -207,7 +207,7 @@
                     const cloudResult = await response.json();
                     if (cloudResult && cloudResult.record) {
                         if (cloudResult.record.notesList && Array.isArray(cloudResult.record.notesList)) {
-                            cloudResult.record.notesList.sort((a, b) => new Date(b.id) - new Date(a.id));
+                            sortNotesByDate(cloudResult.record.notesList);
                         }
                         localStorage.setItem('ncm309_school_data', JSON.stringify(cloudResult.record));
                     }
@@ -222,6 +222,27 @@
             return fetch(`${url}${separator}_t=${new Date().getTime()}`, {
                 headers: { 'X-Master-Key': '$2a$10$95bW31HqL48Jb8Q5Vf3d1eK7n9bW31HqL48Jb8Q5Vf3d1eK7n9bW3' }
             });
+        }
+
+        // 依據您打的日期字串進行解析並由新到舊排序
+        function sortNotesByDate(notesList) {
+            notesList.sort((a, b) => {
+                const dateA = parseDateStringForSorting(a.date);
+                const dateB = parseDateStringForSorting(b.date);
+                return dateB - dateA; // 新的日期排在前面
+            });
+        }
+
+        function parseDateStringForSorting(dateStr) {
+            if (!dateStr) return 0;
+            const match = dateStr.match(/(?:民國\s*(\d+)\s*年)?\s*(\d+)\s*月\s*(\d+)\s*日/);
+            if (match) {
+                let year = match[1] ? parseInt(match[1]) + 1911 : new Date().getFullYear();
+                let month = parseInt(match[2]) - 1;
+                let day = parseInt(match[3]);
+                return new Date(year, month, day).getTime();
+            }
+            return new Date(dateStr).getTime() || 0;
         }
 
         function getSystemData() {
@@ -239,7 +260,7 @@
                 if (!parsed.notesList || parsed.notesList.length === 0) {
                     parsed.notesList = freshData.notesList;
                 } else {
-                    parsed.notesList.sort((a, b) => new Date(b.id) - new Date(a.id));
+                    sortNotesByDate(parsed.notesList);
                 }
                 if (!parsed.students || Object.keys(parsed.students).length < 25) {
                     parsed.students = freshData.students;
@@ -267,7 +288,7 @@
         }
 
         function generateDefaultData() {
-            const names = ["黃琨翔", "陳秉軒", "杜晨翔", "劉景碩", "王宇童", "吳立翔", "陳宇恩", "林楷諾", "李柏衡", "林晉翰", "徐堉綸", "紀孟希", "徐晟瀚", "王知言", "蔡佩穎", "鄭詠心", "郭聿芸", "楊茲甯", "王岑芝", "吳涵儒", "洪楀晴", "林芷萱", "潘若穎", "焉語霓", "蘇唯心"];
+            const names = ["黃琨翔", "陳秉軒", "杜晨翔", "劉景碩", "王宇童", "吳立翔", "陳宇恩", "林楷諾", "李柏衡", "林晉翰", "徐堉綸", "紀孟希", "徐晟瀚", "王知言", "蔡沛穎", "鄭詠心", "郭聿芸", "楊茲甯", "王岑芝", "吳涵儒", "洪楀晴", "林芷萱", "潘若穎", "焉語霓", "蘇唯心"];
             const ids = ["113056", "113058", "113164", "113166", "113245", "113140", "113248", "113010", "113037", "113279", "113123", "113200", "113015", "113017", "113151", "113284", "113178", "113204", "113021", "113205", "113232", "113208", "113129", "113134", "113212"];
             let students = {};
             ids.forEach((id, index) => {
@@ -326,6 +347,7 @@
         }
 
         function renderDashboard(student, systemData) {
+            sortNotesByDate(systemData.notesList);
             const activeNote = systemData.notesList[0] || null;
             const yesterdayNote = systemData.notesList[1] || null;
 
@@ -385,7 +407,6 @@
                 yesterdayHwContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">昨日無作業狀態追蹤</p>`;
             }
 
-            // 個別學生專屬的需家長協助作業/事項顯示
             const parentAssistContainer = document.getElementById('parent-assist-homework-list');
             parentAssistContainer.innerHTML = '';
             
