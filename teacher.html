@@ -22,7 +22,7 @@
                     <i class="fa-solid fa-shield-cat"></i>
                 </div>
                 <h2 class="text-xl font-bold text-[#2F4F4F]">教師溫馨後台</h2>
-                <p class="text-xs text-[#598379]">請輸入教師專屬帳號與密碼</p>
+                <p class="text-xs text-[#598379]">請輸入教師專屬帳號與密碼 (t309 / 0909)</p>
             </div>
 
             <div class="space-y-4 text-sm">
@@ -422,7 +422,7 @@
                 document.getElementById('teacher-dashboard').classList.remove('hidden');
                 loadTeacherData();
             } else {
-                alert("帳號或密碼錯誤！請輸入正確的教師帳密 (t309 / 0909)。");
+                alert("帳號或密碼錯誤！");
             }
         }
 
@@ -699,7 +699,7 @@
             const rawDateVal = document.getElementById('note-date').value.trim();
 
             if (!contentVal) {
-                alert("聯絡簿抄寫內容不得為空白，避免資料被清空！");
+                alert("聯絡簿抄寫內容不得為空白！");
                 return;
             }
 
@@ -716,8 +716,38 @@
             systemData.notesList.unshift(updatedNoteData);
             
             await saveSystemData(systemData);
-            alert(`聯絡簿已成功儲存與雲端同步！歷史紀錄已完整保留。`);
+            alert(`聯絡簿已成功發布與雲端同步！`);
             loadTeacherData();
+        }
+
+        function parseAndCorrectDateString(inputStr) {
+            if (!inputStr) return getTaiwanTaipeiDateString();
+            const match = inputStr.match(/(?:民國\s*(\d+)\s*年)?\s*(\d+)\s*月\s*(\d+)\s*日/);
+            if (match) {
+                let year = match[1] ? parseInt(match[1]) + 1911 : new Date().getFullYear();
+                let month = parseInt(match[2]) - 1;
+                let day = parseInt(match[3]);
+                const targetDate = new Date(year, month, day);
+                if (!isNaN(targetDate.getTime())) {
+                    return formatTaiwanTaipeiDate(targetDate);
+                }
+            }
+            return inputStr;
+        }
+
+        function formatTaiwanTaipeiDate(dateObj) {
+            const options = { timeZone: 'Asia/Taipei', year: 'numeric', month: 'numeric', day: 'numeric', weekday: 'long' };
+            const formatter = new Intl.DateTimeFormat('zh-TW', options);
+            const parts = formatter.formatToParts(dateObj);
+            
+            let year = '', month = '', day = '', weekday = '';
+            parts.forEach(part => {
+                if (part.type === 'year') year = parseInt(part.value) - 1911;
+                if (part.type === 'month') month = part.value;
+                if (part.type === 'day') day = part.value;
+                if (part.type === 'weekday') weekday = part.value;
+            });
+            return `民國 ${year} 年 ${month} 月 ${day} 日 (${weekday})`;
         }
 
         async function addNewStudent() {
