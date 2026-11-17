@@ -8,8 +8,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background-color: #E6F4F1; font-family: system-ui, -apple-system, sans-serif; color: #2F4F4F; }
-        .soft-card { background-color: #FFFFFF; border: 2px solid #A3D2CA; border-radius: 28px; box-shadow: 0 4px 12px rgba(47, 79, 79, 0.05); }
-        .soft-header { background-color: #F0F7F6; border-bottom: 2px solid #A3D2CA; border-top-left-radius: 25px; border-top-right-radius: 25px; }
+        .soft-card { background-color: #FFFFFF; border: 2px solid #A3D2CA; border-radius: 24px; box-shadow: 0 4px 12px rgba(47, 79, 79, 0.05); }
+        .soft-header { background-color: #F0F7F6; border-bottom: 2px solid #A3D2CA; border-top-left-radius: 22px; border-top-right-radius: 22px; }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -31,96 +31,96 @@
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-4 py-6 flex-grow w-full space-y-6">
+    <main class="max-w-md mx-auto px-3 py-4 flex-grow w-full space-y-4">
 
         <!-- 登入畫面 -->
-        <section id="login-section" class="soft-card p-6 space-y-6 my-auto">
-            <div class="text-center space-y-3">
-                <div class="w-16 h-16 bg-[#C8E6C9] text-[#2F4F4F] rounded-3xl flex items-center justify-center mx-auto text-2xl shadow-inner">
+        <section id="login-section" class="soft-card p-5 space-y-5 my-auto">
+            <div class="text-center space-y-2">
+                <div class="w-14 h-14 bg-[#C8E6C9] text-[#2F4F4F] rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">
                     <i class="fa-solid fa-whale"></i>
                 </div>
-                <h2 class="text-xl font-bold text-[#2F4F4F]" id="login-title-display">親師生溫馨聯絡平台</h2>
+                <h2 class="text-lg font-bold text-[#2F4F4F]" id="login-title-display">親師生溫馨聯絡平台</h2>
                 <p class="text-xs text-[#598379]">請輸入學生學號來陪伴寶貝每一天 ✨</p>
             </div>
 
-            <form onsubmit="handleLogin(event)" class="space-y-4 text-sm">
+            <form onsubmit="handleLogin(event)" class="space-y-3 text-sm">
                 <div>
-                    <label class="block font-bold text-[#2F4F4F] mb-1">學生學號</label>
-                    <input type="text" id="login-student-id" required placeholder="請輸入學生學號" class="w-full px-4 py-3.5 rounded-2xl border-2 border-[#A3D2CA] bg-[#F0F7F6] text-sm focus:ring-2 focus:ring-[#598379] outline-none">
+                    <label class="block font-bold text-[#2F4F4F] mb-1 text-xs">學生學號</label>
+                    <input type="text" id="login-student-id" required placeholder="請輸入學生學號" class="w-full px-3.5 py-3 rounded-xl border-2 border-[#A3D2CA] bg-[#F0F7F6] text-sm focus:ring-2 focus:ring-[#598379] outline-none">
                 </div>
                 <div class="flex items-center pt-1">
-                    <input type="checkbox" id="parent-remember-me" class="w-5 h-5 text-[#598379] rounded border-[#A3D2CA]">
+                    <input type="checkbox" id="parent-remember-me" class="w-4 h-4 text-[#598379] rounded border-[#A3D2CA]">
                     <label for="parent-remember-me" class="ml-2 text-[#2F4F4F] font-bold text-xs">記住我 (下次自動登入)</label>
                 </div>
-                <button type="submit" class="w-full bg-[#598379] hover:bg-[#4A6B63] text-white font-bold py-3.5 rounded-2xl shadow-md transition text-base">
+                <button type="submit" class="w-full bg-[#598379] hover:bg-[#4A6B63] text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
                     進入專屬小天地 🧸
                 </button>
             </form>
 
-            <div class="pt-4 border-t border-[#A3D2CA] flex justify-between items-center text-xs text-[#598379]">
+            <div class="pt-3 border-t border-[#A3D2CA] flex justify-between items-center text-xs text-[#598379]">
                 <span id="login-footer-school">崇明國小</span>
                 <a href="teacher.html" class="text-[#598379] hover:underline font-bold"><i class="fa-solid fa-lock mr-1"></i>教師後台</a>
             </div>
         </section>
 
         <!-- 儀表板主畫面 -->
-        <div id="dashboard-section" class="hidden space-y-6">
-            <div class="flex bg-[#D8E8E5] p-1.5 rounded-2xl border-2 border-[#A3D2CA]">
-                <button onclick="switchTab('today')" id="tab-today" class="flex-1 py-2 text-xs font-bold rounded-xl bg-white text-[#2F4F4F] shadow-sm transition">
-                    今日聯絡簿與作業
+        <div id="dashboard-section" class="hidden space-y-4">
+            <div class="flex bg-[#D8E8E5] p-1 rounded-xl border-2 border-[#A3D2CA] text-xs">
+                <button onclick="switchTab('today')" id="tab-today" class="flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition">
+                    今日聯絡簿
                 </button>
-                <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-2 text-xs font-bold rounded-lg text-[#598379] transition">
-                    歷史點滴紀錄
+                <button onclick="switchTab('history')" id="tab-history" class="flex-1 py-2 font-bold rounded-lg text-[#598379] transition">
+                    歷史紀錄
                 </button>
-                <button onclick="switchTab('injury')" id="tab-injury" class="flex-1 py-2 text-xs font-bold rounded-lg text-[#598379] transition">
-                    傷病通知紀錄
+                <button onclick="switchTab('injury')" id="tab-injury" class="flex-1 py-2 font-bold rounded-lg text-[#598379] transition">
+                    傷病通知
                 </button>
             </div>
 
-            <!-- 第一頁：今日聯絡簿與作業四大區塊 -->
-            <div id="view-today" class="space-y-6">
+            <!-- 第一頁：今日聯絡簿與作業 -->
+            <div id="view-today" class="space-y-4">
                 
                 <!-- 當天聯絡簿內容與老師提醒 -->
-                <section class="soft-card p-5 space-y-3">
-                    <div class="soft-header px-4 py-2.5 flex justify-between items-center -mx-5 -mt-5 mb-3">
-                        <h2 class="font-bold text-[#2F4F4F] text-sm flex items-center gap-2">
+                <section class="soft-card p-4 space-y-3">
+                    <div class="soft-header px-3 py-2 flex justify-between items-center -mx-4 -mt-4 mb-2">
+                        <h2 class="font-bold text-[#2F4F4F] text-xs flex items-center gap-1.5">
                             <i class="fa-solid fa-star text-amber-600"></i> 當天聯絡簿內容
                         </h2>
-                        <span class="text-xs text-[#2F4F4F] font-bold bg-[#C8E6C9] px-3 py-1 rounded-full shadow-sm" id="note-display-date">載入中...</span>
+                        <span class="text-[11px] text-[#2F4F4F] font-bold bg-[#C8E6C9] px-2.5 py-0.5 rounded-full shadow-sm" id="note-display-date">載入中...</span>
                     </div>
-                    <div class="bg-[#F0F7F6] p-4 rounded-2xl border border-[#A3D2CA] shadow-sm">
+                    <div class="bg-[#F0F7F6] p-3 rounded-xl border border-[#A3D2CA]">
                         <p class="text-sm text-[#2F4F4F] whitespace-pre-line font-medium leading-relaxed" id="note-display-content">載入中...</p>
                     </div>
                     
-                    <div class="bg-[#FFF8E1] p-4 rounded-2xl border border-[#FFE082] space-y-1">
-                        <p class="text-xs font-bold text-[#8D6E63] flex items-center gap-1" id="note-teacher-label">
+                    <div class="bg-[#FFF8E1] p-3 rounded-xl border border-[#FFE082] space-y-1">
+                        <p class="text-[11px] font-bold text-[#8D6E63] flex items-center gap-1" id="note-teacher-label">
                             <i class="fa-solid fa-heart text-rose-500"></i> 老師提醒 / 給家長的話：
                         </p>
-                        <p class="text-sm text-[#3E2723] font-medium leading-relaxed pl-4" id="note-display-message">尚無留言</p>
+                        <p class="text-sm text-[#3E2723] font-medium leading-relaxed pl-3" id="note-display-message">尚無留言</p>
                     </div>
 
-                    <div class="flex items-center gap-2 text-xs text-[#2F4F4F] bg-[#E0F2F1] p-3.5 rounded-2xl border border-[#B2DFDB]">
-                        <i class="fa-solid fa-bell text-[#00897B] text-base"></i>
-                        <p class="text-sm"><span class="font-bold">叮嚀備註：</span><span id="note-display-reminder">載入中...</span></p>
+                    <div class="flex items-center gap-2 text-xs text-[#2F4F4F] bg-[#E0F2F1] p-3 rounded-xl border border-[#B2DFDB]">
+                        <i class="fa-solid fa-bell text-[#00897B] text-sm"></i>
+                        <p class="text-xs"><span class="font-bold">叮嚀備註：</span><span id="note-display-reminder">載入中...</span></p>
                     </div>
                 </section>
 
                 <!-- 昨天作業今天繳交狀態 -->
-                <section class="soft-card p-5 space-y-3">
-                    <h2 class="font-bold text-[#2F4F4F] text-sm flex items-center gap-2 border-b border-[#A3D2CA] pb-2">
+                <section class="soft-card p-4 space-y-2.5">
+                    <h2 class="font-bold text-[#2F4F4F] text-xs flex items-center gap-1.5 border-b border-[#A3D2CA] pb-2">
                         <i class="fa-solid fa-list-check text-[#598379]"></i> 昨天作業今天到校繳交狀態
                     </h2>
-                    <div class="space-y-2.5 text-sm" id="yesterday-homework-list">
-                        <p class="text-xs text-slate-400 text-center py-2">昨日無登記作業狀態</p>
+                    <div class="space-y-2 text-xs" id="yesterday-homework-list">
+                        <p class="text-slate-400 text-center py-2">昨日無登記作業狀態</p>
                     </div>
                 </section>
 
                 <!-- 需家長協助完成之作業 (個別學生專屬資料) -->
-                <section class="soft-card p-5 space-y-3 bg-[#FFF9C4]/30 border-[#FFE082]">
-                    <h2 class="font-bold text-[#5D4037] text-sm flex items-center gap-2 border-b border-[#FFE082] pb-2">
+                <section class="soft-card p-4 space-y-2.5 bg-[#FFF9C4]/30 border-[#FFE082]">
+                    <h2 class="font-bold text-[#5D4037] text-xs flex items-center gap-1.5 border-b border-[#FFE082] pb-2">
                         <i class="fa-solid fa-hands-holding-child text-amber-600"></i> 需家長協助完成之作業 / 個別事項
                     </h2>
-                    <div class="bg-white p-4 rounded-2xl border border-[#FFE082] text-sm space-y-2" id="parent-assist-homework-list">
+                    <div class="bg-white p-3 rounded-xl border border-[#FFE082] text-xs space-y-1" id="parent-assist-homework-list">
                         <p class="text-slate-500 text-center py-1">目前無特別需家長協助之項目 ✨</p>
                     </div>
                 </section>
@@ -128,35 +128,35 @@
             </div>
 
             <!-- 第二頁：歷史點滴紀錄 -->
-            <div id="view-history" class="space-y-6 hidden">
-                <section class="soft-card p-5 space-y-4">
-                    <h2 class="font-bold text-[#2F4F4F] text-sm flex items-center gap-2 border-b border-[#A3D2CA] pb-2">
-                        <i class="fa-solid fa-box-archive text-[#598379]"></i> 歷史聯絡簿完整總覽（隨時翻閱）
+            <div id="view-history" class="space-y-4 hidden">
+                <section class="soft-card p-4 space-y-3">
+                    <h2 class="font-bold text-[#2F4F4F] text-xs flex items-center gap-1.5 border-b border-[#A3D2CA] pb-2">
+                        <i class="fa-solid fa-box-archive text-[#598379]"></i> 歷史聯絡簿完整總覽
                     </h2>
-                    <div class="space-y-3 max-h-96 overflow-y-auto pr-1" id="all-history-notes-container"></div>
+                    <div class="space-y-2.5 max-h-80 overflow-y-auto pr-1 text-xs" id="all-history-notes-container"></div>
                 </section>
             </div>
 
             <!-- 第三頁：傷病通知紀錄 -->
-            <div id="view-injury" class="space-y-6 hidden">
-                <section class="soft-card p-5 space-y-4">
-                    <h2 class="font-bold text-[#2F4F4F] text-sm flex items-center gap-2 border-b border-[#A3D2CA] pb-2">
-                        <i class="fa-solid fa-clock text-[#598379]"></i> 老師上傳，等待家長確認（<span id="pending-injury-count">0</span> 筆）
+            <div id="view-injury" class="space-y-4 hidden">
+                <section class="soft-card p-4 space-y-3">
+                    <h2 class="font-bold text-[#2F4F4F] text-xs flex items-center gap-1.5 border-b border-[#A3D2CA] pb-2">
+                        <i class="fa-solid fa-clock text-[#598379]"></i> 老師上傳，等待確認（<span id="pending-injury-count">0</span> 筆）
                     </h2>
-                    <div class="space-y-3 text-sm" id="pending-injury-list"></div>
+                    <div class="space-y-2.5 text-xs" id="pending-injury-list"></div>
                 </section>
 
-                <section class="soft-card p-5 space-y-4 border-[#A5D6A7]">
-                    <h2 class="font-bold text-[#2E7D32] text-sm flex items-center gap-2 border-b border-[#C8E6C9] pb-2">
-                        <i class="fa-solid fa-circle-check text-emerald-600"></i> 家長已確認收到紀錄（<span id="confirmed-injury-count">0</span> 筆）
+                <section class="soft-card p-4 space-y-3 border-[#A5D6A7]">
+                    <h2 class="font-bold text-[#2E7D32] text-xs flex items-center gap-1.5 border-b border-[#C8E6C9] pb-2">
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i> 已確認收到紀錄（<span id="confirmed-injury-count">0</span> 筆）
                     </h2>
-                    <div class="space-y-3 text-sm" id="confirmed-injury-list"></div>
+                    <div class="space-y-2.5 text-xs" id="confirmed-injury-list"></div>
                 </section>
             </div>
         </div>
     </main>
 
-    <footer class="py-4 text-center text-xs text-[#598379]">
+    <footer class="py-3 text-center text-[11px] text-[#598379]">
         <p id="footer-school-name">崇明國小 • 溫馨守護每一刻 💛</p>
     </footer>
 
@@ -314,7 +314,6 @@
         }
 
         function renderDashboard(student, systemData) {
-            // 抓取老師在後台指定的當天聯絡簿
             let activeNote = systemData.notesList.find(n => n.id === systemData.activeNoteId) || systemData.notesList[0] || null;
 
             if (activeNote) {
@@ -351,9 +350,9 @@
                         const statusKey = yestStudentStatus[idx] || "1";
                         const s = statusMap[statusKey] || statusMap["1"];
                         yesterdayHwContainer.innerHTML += `
-                            <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#F0F7F6] border border-[#A3D2CA] text-sm">
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-[#F0F7F6] border border-[#A3D2CA] text-xs">
                                 <span class="font-bold text-[#2F4F4F]">${line}</span>
-                                <span class="px-3.5 py-1 rounded-full font-bold border ${s.color}">${s.text}</span>
+                                <span class="px-3 py-0.5 rounded-full font-bold border ${s.color}">${s.text}</span>
                             </div>
                         `;
                     });
@@ -367,13 +366,13 @@
             
             if (student.parentAssist && student.parentAssist.trim() !== '') {
                 parentAssistContainer.innerHTML = `
-                    <div class="p-3.5 bg-[#FFF9C4] rounded-xl border border-[#FFE082] text-sm space-y-1">
+                    <div class="p-3 bg-[#FFF9C4] rounded-xl border border-[#FFE082] text-xs space-y-1">
                         <span class="font-bold text-[#5D4037]"><i class="fa-solid fa-hands-holding-child mr-1"></i> 老師給家長的個別協助事項：</span>
-                        <p class="text-[#3E2723] whitespace-pre-line mt-1 pl-4 font-medium">${student.parentAssist}</p>
+                        <p class="text-[#3E2723] whitespace-pre-line mt-1 pl-3 font-medium">${student.parentAssist}</p>
                     </div>
                 `;
             } else {
-                parentAssistContainer.innerHTML = `<p class="text-slate-500 text-center py-2 font-medium">目前無特別需家長協助之項目 ✨</p>`;
+                parentAssistContainer.innerHTML = `<p class="text-slate-500 text-center py-1 font-medium">目前無特別需家長協助之項目 ✨</p>`;
             }
 
             const historyNotesContainer = document.getElementById('all-history-notes-container');
@@ -384,14 +383,14 @@
                 systemData.notesList.forEach(note => {
                     const isCurrent = note.id === systemData.activeNoteId;
                     historyNotesContainer.innerHTML += `
-                        <div class="p-4 ${isCurrent ? 'bg-[#D8E8E5] border-[#598379]' : 'bg-[#F0F7F6] border-[#A3D2CA]'} rounded-2xl border text-sm space-y-1.5">
+                        <div class="p-3.5 ${isCurrent ? 'bg-[#D8E8E5] border-[#598379]' : 'bg-[#F0F7F6] border-[#A3D2CA]'} rounded-xl border text-xs space-y-1">
                             <p class="font-bold text-[#2F4F4F] flex justify-between items-center">
                                 <span><i class="fa-solid fa-calendar-days mr-1 text-[#598379]"></i> ${note.date}</span>
-                                ${isCurrent ? '<span class="text-xs bg-[#598379] text-white px-2 py-0.5 rounded-full">當前顯示中</span>' : ''}
+                                ${isCurrent ? '<span class="text-[10px] bg-[#598379] text-white px-2 py-0.5 rounded-full">當前顯示中</span>' : ''}
                             </p>
                             <p class="text-slate-800 whitespace-pre-line font-medium">${note.content}</p>
-                            ${note.parentMessage ? `<p class="text-[#2F4F4F] bg-[#E0F2F1] p-2.5 rounded-xl mt-1 font-medium">老師的話：${note.parentMessage}</p>` : ''}
-                            ${note.reminder ? `<p class="text-[#00897B] bg-[#E0F2F1] p-2 rounded-xl mt-1 font-medium">叮嚀備註：${note.reminder}</p>` : ''}
+                            ${note.parentMessage ? `<p class="text-[#2F4F4F] bg-[#E0F2F1] p-2 rounded-lg mt-1 font-medium">老師的話：${note.parentMessage}</p>` : ''}
+                            ${note.reminder ? `<p class="text-[#00897B] bg-[#E0F2F1] p-2 rounded-lg mt-1 font-medium">叮嚀備註：${note.reminder}</p>` : ''}
                         </div>
                     `;
                 });
@@ -412,7 +411,7 @@
                 student.injuries.forEach((inj, index) => {
                     const isConfirmed = inj.confirmed === true;
                     const htmlCard = `
-                        <div class="p-4 rounded-2xl ${isConfirmed ? 'bg-[#E8F5E9] border-[#A5D6A7]' : 'bg-[#FFEBEE] border-[#EF9A9A]'} border text-sm space-y-2 shadow-sm">
+                        <div class="p-3.5 rounded-xl ${isConfirmed ? 'bg-[#E8F5E9] border-[#A5D6A7]' : 'bg-[#FFEBEE] border-[#EF9A9A]'} border text-xs space-y-1.5 shadow-sm">
                             <div class="flex justify-between items-center font-bold">
                                 <span class="${isConfirmed ? 'text-[#2E7D32]' : 'text-[#C62828]'}">${inj.date} ${inj.time}</span>
                                 <span class="text-[#598379]">處理：${inj.nurse}</span>
@@ -421,21 +420,21 @@
                                 <p class="font-bold text-slate-900">狀況：${inj.symptom}</p>
                                 <p class="text-slate-700 mt-0.5">地點：${inj.location}</p>
                             </div>
-                            <div class="bg-white p-3.5 rounded-xl border ${isConfirmed ? 'border-[#C8E6C9]' : 'border-[#FFCDD2]'} text-slate-800 font-medium">
+                            <div class="bg-white p-2.5 rounded-lg border ${isConfirmed ? 'border-[#C8E6C9]' : 'border-[#FFCDD2]'} text-slate-800 font-medium">
                                 <p class="font-bold ${isConfirmed ? 'text-[#2E7D32]' : 'text-[#C62828]'}">處理經過：</p>
                                 <p class="mt-0.5">${inj.treatment}</p>
                             </div>
                             <div class="pt-2 border-t ${isConfirmed ? 'border-[#C8E6C9]' : 'border-[#FFCDD2]'} flex justify-between items-center">
-                                <span class="text-xs ${isConfirmed ? 'text-emerald-700 font-bold' : 'text-amber-800 font-bold'}">
+                                <span class="text-[11px] ${isConfirmed ? 'text-emerald-700 font-bold' : 'text-amber-800 font-bold'}">
                                     <i class="fa-solid ${isConfirmed ? 'fa-circle-check' : 'fa-clock'} mr-1"></i>
                                     ${isConfirmed ? '已於 ' + inj.confirmTime + ' 確認收到' : '等待家長確認'}
                                 </span>
                                 ${!isConfirmed ? `
-                                    <button onclick="confirmInjury(${index})" class="bg-[#598379] hover:bg-[#4A6B63] text-white font-bold px-4 py-2 rounded-xl shadow-sm transition text-xs">
-                                        確認已收到訊息 💛
+                                    <button onclick="confirmInjury(${index})" class="bg-[#598379] hover:bg-[#4A6B63] text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition text-[11px]">
+                                        確認已收到 💛
                                     </button>
                                 ` : `
-                                    <span class="bg-[#C8E6C9] text-[#1B5E20] px-3 py-1.5 rounded-xl font-bold text-xs">已完成確認 ✓</span>
+                                    <span class="bg-[#C8E6C9] text-[#1B5E20] px-2.5 py-1 rounded-lg font-bold text-[11px]">已完成確認 ✓</span>
                                 `}
                             </div>
                         </div>
@@ -451,10 +450,10 @@
                 });
 
                 if (pendingCount === 0) {
-                    pendingContainer.innerHTML = `<p class="text-center text-xs text-[#598379] font-bold py-3">太棒了！所有傷病通知皆已確認完畢 ✨</p>`;
+                    pendingContainer.innerHTML = `<p class="text-center text-xs text-[#598379] font-bold py-2">太棒了！所有傷病通知皆已確認完畢 ✨</p>`;
                 }
                 if (confirmedCount === 0) {
-                    confirmedContainer.innerHTML = `<p class="text-center text-xs text-slate-400 py-3">尚無已確認的傷病紀錄</p>`;
+                    confirmedContainer.innerHTML = `<p class="text-center text-xs text-slate-400 py-2">尚無已確認的傷病紀錄</p>`;
                 }
             }
 
@@ -484,9 +483,9 @@
         }
 
         function switchTab(tab) {
-            document.getElementById('tab-today').className = tab === 'today' ? "flex-1 py-2 text-xs font-bold rounded-xl bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 text-xs font-bold rounded-lg text-[#598379] transition";
-            document.getElementById('tab-history').className = tab === 'history' ? "flex-1 py-2 text-xs font-bold rounded-xl bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 text-xs font-bold rounded-lg text-[#598379] transition";
-            document.getElementById('tab-injury').className = tab === 'injury' ? "flex-1 py-2 text-xs font-bold rounded-xl bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 text-xs font-bold rounded-lg text-[#598379] transition";
+            document.getElementById('tab-today').className = tab === 'today' ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 text-xs font-bold rounded-lg text-[#598379] transition";
+            document.getElementById('tab-history').className = tab === 'history' ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 text-xs font-bold rounded-lg text-[#598379] transition";
+            document.getElementById('tab-injury').className = tab === 'injury' ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 text-xs font-bold rounded-lg text-[#598379] transition";
 
             document.getElementById('view-today').classList.toggle('hidden', tab !== 'today');
             document.getElementById('view-history').classList.toggle('hidden', tab !== 'history');
