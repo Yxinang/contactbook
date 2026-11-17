@@ -105,17 +105,17 @@
                     </div>
                 </section>
 
-                <!-- 昨天作業今天繳交狀態 -->
+                <!-- 作業今天繳交狀態 -->
                 <section class="soft-card p-4 space-y-2.5">
                     <h2 class="font-bold text-[#2F4F4F] text-xs flex items-center gap-1.5 border-b border-[#A3D2CA] pb-2">
-                        <i class="fa-solid fa-list-check text-[#598379]"></i> 昨天作業今天到校繳交狀態
+                        <i class="fa-solid fa-list-check text-[#598379]"></i> 作業繳交狀態核對
                     </h2>
                     <div class="space-y-2 text-xs" id="yesterday-homework-list">
-                        <p class="text-slate-400 text-center py-2">昨日無登記作業狀態</p>
+                        <p class="text-slate-400 text-center py-2">目前無作業狀態登記</p>
                     </div>
                 </section>
 
-                <!-- 需家長協助完成之作業 (個別學生專屬資料) -->
+                <!-- 需家長協助完成之作業 -->
                 <section class="soft-card p-4 space-y-2.5 bg-[#FFF9C4]/30 border-[#FFE082]">
                     <h2 class="font-bold text-[#5D4037] text-xs flex items-center gap-1.5 border-b border-[#FFE082] pb-2">
                         <i class="fa-solid fa-hands-holding-child text-amber-600"></i> 需家長協助完成之作業 / 個別事項
@@ -196,6 +196,9 @@
                 if (response.ok) {
                     const cloudResult = await response.json();
                     if (cloudResult && cloudResult.record) {
+                        if (cloudResult.record.notesList && Array.isArray(cloudResult.record.notesList)) {
+                            sortNotesByDate(cloudResult.record.notesList);
+                        }
                         localStorage.setItem('ncm309_school_data', JSON.stringify(cloudResult.record));
                     }
                 }
@@ -209,6 +212,26 @@
             return fetch(`${url}${separator}_t=${new Date().getTime()}`, {
                 headers: { 'X-Master-Key': '$2a$10$95bW31HqL48Jb8Q5Vf3d1eK7n9bW31HqL48Jb8Q5Vf3d1eK7n9bW3' }
             });
+        }
+
+        function sortNotesByDate(notesList) {
+            notesList.sort((a, b) => {
+                const dateA = parseDateStringForSorting(a.date);
+                const dateB = parseDateStringForSorting(b.date);
+                return dateB - dateA;
+            });
+        }
+
+        function parseDateStringForSorting(dateStr) {
+            if (!dateStr) return 0;
+            const match = dateStr.match(/(?:民國\s*(\d+)\s*年)?\s*(\d+)\s*月\s*(\d+)\s*日/);
+            if (match) {
+                let year = match[1] ? parseInt(match[1]) + 1911 : new Date().getFullYear();
+                let month = parseInt(match[2]) - 1;
+                let day = parseInt(match[3]);
+                return new Date(year, month, day).getTime();
+            }
+            return new Date(dateStr).getTime() || 0;
         }
 
         function getSystemData() {
@@ -225,6 +248,8 @@
                 if (!parsed.classInfo) parsed.classInfo = freshData.classInfo;
                 if (!parsed.notesList || parsed.notesList.length === 0) {
                     parsed.notesList = freshData.notesList;
+                } else {
+                    sortNotesByDate(parsed.notesList);
                 }
                 if (!parsed.activeNoteId && parsed.notesList.length > 0) {
                     parsed.activeNoteId = parsed.notesList[0].id;
@@ -314,6 +339,7 @@
         }
 
         function renderDashboard(student, systemData) {
+            sortNotesByDate(systemData.notesList);
             let activeNote = systemData.notesList.find(n => n.id === systemData.activeNoteId) || systemData.notesList[0] || null;
 
             if (activeNote) {
@@ -483,9 +509,9 @@
         }
 
         function switchTab(tab) {
-            document.getElementById('tab-today').className = tab === 'today' ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 text-xs font-bold rounded-lg text-[#598379] transition";
-            document.getElementById('tab-history').className = tab === 'history' ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 text-xs font-bold rounded-lg text-[#598379] transition";
-            document.getElementById('tab-injury').className = tab === 'injury' ? "flex-1 py-2 text-xs font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 text-xs font-bold rounded-lg text-[#598379] transition";
+            document.getElementById('tab-today').className = tab === 'today' ? "flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 font-bold rounded-lg text-[#598379] transition";
+            document.getElementById('tab-history').className = tab === 'history' ? "flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 font-bold rounded-lg text-[#598379] transition";
+            document.getElementById('tab-injury').className = tab === 'injury' ? "flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition" : "flex-1 py-2 font-bold rounded-lg text-[#598379] transition";
 
             document.getElementById('view-today').classList.toggle('hidden', tab !== 'today');
             document.getElementById('view-history').classList.toggle('hidden', tab !== 'history');
