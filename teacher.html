@@ -22,7 +22,7 @@
                     <i class="fa-solid fa-shield-cat"></i>
                 </div>
                 <h2 class="text-lg font-bold text-[#2F4F4F]">教師溫馨後台</h2>
-                <p class="text-xs text-[#598379]">請輸入教師專屬帳號與密碼 (t309 / 0909)</p>
+                <p class="text-xs text-[#598379]">請輸入教師專屬帳號與密碼</p>
             </div>
 
             <div class="space-y-3 text-sm">
@@ -58,7 +58,7 @@
                     </div>
                     <div>
                         <h1 class="font-bold text-sm" id="teacher-header-title">班級 • 教師溫馨後台</h1>
-                        <p class="text-[11px] text-[#E6F4F1]">作業與預排聯絡簿管理系統</p>
+                        <p class="text-[11px] text-[#E6F4F1]">手機直覺卡片式作業追蹤系統</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
@@ -69,7 +69,7 @@
             </div>
         </header>
 
-        <main class="max-w-6xl mx-auto px-3 py-4 flex-grow w-full space-y-4">
+        <main class="max-w-4xl mx-auto px-3 py-4 flex-grow w-full space-y-4">
             <div class="flex bg-[#D8E8E5] p-1 rounded-xl max-w-2xl mx-auto overflow-x-auto border-2 border-[#A3D2CA] text-xs">
                 <button onclick="switchTab('homework')" id="tab-homework" class="flex-1 py-2 font-bold rounded-lg bg-white text-[#2F4F4F] shadow-sm transition whitespace-nowrap px-3">作業狀態</button>
                 <button onclick="switchTab('note')" id="tab-note" class="flex-1 py-2 font-bold rounded-lg text-[#598379] transition whitespace-nowrap px-3">聯絡簿管理</button>
@@ -77,22 +77,20 @@
                 <button onclick="switchTab('settings')" id="tab-settings" class="flex-1 py-2 font-bold rounded-lg text-[#598379] transition whitespace-nowrap px-3"><i class="fa-solid fa-gear mr-1"></i>班級設定</button>
             </div>
 
-            <!-- 1. 作業狀態管理 -->
-            <div id="section-homework" class="soft-card p-4 space-y-3">
-                <div class="soft-header px-3 py-2 flex justify-between items-center -mx-4 -mt-4 mb-2">
-                    <h2 class="font-bold text-[#2F4F4F] text-xs"><i class="fa-solid fa-list-check text-[#598379] mr-1"></i>登記「作業」繳交狀態</h2>
-                    <span id="hw-current-date-tag" class="text-[11px] bg-[#C8E6C9] text-[#2F4F4F] px-2.5 py-0.5 rounded-full font-bold shadow-sm">載入中...</span>
+            <!-- 1. 作業狀態管理（手機卡片式清單設計） -->
+            <div id="section-homework" class="space-y-4">
+                <div class="soft-card p-4 flex justify-between items-center">
+                    <div>
+                        <h2 class="font-bold text-[#2F4F4F] text-sm"><i class="fa-solid fa-list-check text-[#598379] mr-1.5"></i>登記作業繳交狀態</h2>
+                        <p class="text-xs text-[#598379] mt-0.5" id="hw-current-date-tag">載入中...</p>
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="setAllGlobalStatus('1')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-xl text-[11px] font-bold shadow-sm transition">全班繳交</button>
+                    </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-[#F0F7F6] text-[#2F4F4F] border-b-2 border-[#A3D2CA] font-bold" id="teacher-homework-thead">
-                                <th class="p-2.5">座號 / 姓名</th>
-                            </tr>
-                        </thead>
-                        <tbody id="teacher-homework-tbody" class="divide-y divide-[#E0F2F1]"></tbody>
-                    </table>
-                </div>
+
+                <!-- 學生卡片清單容器 -->
+                <div id="teacher-homework-cards-container" class="space-y-3"></div>
             </div>
 
             <!-- 2. 聯絡簿內容與管理 -->
@@ -148,7 +146,7 @@
                             </div>
                             <div>
                                 <label class="block font-bold text-[#2F4F4F] mb-1">處理人員</label>
-                                <select id="inj-nurse" required class="w-full px-3 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs">
+                                <select id="inj-nurse" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs">
                                     <option value="保健室">選項一：保健室</option>
                                     <option value="教室觀察">選項二：教室觀察</option>
                                 </select>
@@ -166,7 +164,7 @@
                             <label class="block font-bold text-[#2F4F4F] mb-1">處理經過</label>
                             <textarea id="inj-treatment" rows="2" required class="w-full px-3.5 py-2.5 rounded-xl border border-[#A3D2CA] bg-white font-medium text-xs">生理食鹽水清洗，擦優碘貼人工皮。</textarea>
                         </div>
-                        <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 rounded-xl shadow-sm transition text-xs">發送傷病通知單 🩹</button>
+                        <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 rounded-xl shadow-md transition text-xs">發送傷病通知單 🩹</button>
                     </form>
                 </div>
 
@@ -456,27 +454,15 @@
             document.getElementById('hw-current-date-tag').innerText = `登記作業對應：${activeNote ? activeNote.date : '無'}`;
 
             const hwLines = activeNote && activeNote.content ? activeNote.content.split('\n').filter(line => line.trim() !== '') : [];
-            const thead = document.getElementById('teacher-homework-thead');
-            let theadHtml = `<th class="p-2.5">座號 / 姓名</th>`;
-            if (hwLines.length === 0) {
-                theadHtml += `<th class="p-2.5 text-slate-400">當前聯絡簿尚無作業項目</th>`;
-            } else {
-                hwLines.forEach(line => {
-                    theadHtml += `<th class="p-2.5">${line}</th>`;
-                });
-            }
-            theadHtml += `<th class="p-2.5">需家長協助之作業 / 個別事項</th>`;
-            theadHtml += `<th class="p-2.5 text-center">快捷操作</th>`;
-            thead.innerHTML = theadHtml;
-
+            
             const sortedIds = Object.keys(systemData.students).sort((a, b) => {
                 return parseInt(systemData.students[a].seat) - parseInt(systemData.students[b].seat);
             });
 
-            const tbody = document.getElementById('teacher-homework-tbody');
+            const cardsContainer = document.getElementById('teacher-homework-cards-container');
             const rosterTbody = document.getElementById('settings-student-tbody');
             const selectStudent = document.getElementById('inj-student-id');
-            tbody.innerHTML = '';
+            cardsContainer.innerHTML = '';
             rosterTbody.innerHTML = '';
             selectStudent.innerHTML = '';
 
@@ -484,49 +470,54 @@
                 const student = systemData.students[id];
                 selectStudent.innerHTML += `<option value="${id}">${student.seat} 號 - ${student.name} (學號: ${id})</option>`;
 
-                let rowHtml = `<tr class="hover:bg-[#F0F7F6]"><td class="p-2.5 font-bold text-[#2F4F4F]">${student.seat} 號 - ${student.name} <span class="text-[10px] text-slate-400 font-medium">(${id})</span></td>`;
+                if (!student.homeworkStatus) student.homeworkStatus = {};
+                const noteIdToUse = activeNote ? activeNote.id : 'default';
+                if (!student.homeworkStatus[noteIdToUse]) student.homeworkStatus[noteIdToUse] = {};
+
+                // 產生每一位學生的獨立卡片（手機直式瀏覽極佳）
+                let cardHtml = `
+                    <div class="soft-card p-4 space-y-3">
+                        <div class="flex justify-between items-center border-b border-[#A3D2CA] pb-2">
+                            <span class="font-bold text-[#2F4F4F] text-sm">${student.seat} 號 - ${student.name} <span class="text-[11px] text-slate-400 font-normal">(${id})</span></span>
+                            <div class="space-x-1">
+                                <button onclick="setAllStatusForStudent('${id}', '${noteIdToUse}', ${hwLines.length}, '1')" class="bg-emerald-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold">全部繳交</button>
+                                <button onclick="setAllStatusForStudent('${id}', '${noteIdToUse}', ${hwLines.length}, '3')" class="bg-amber-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold">全部未繳</button>
+                            </div>
+                        </div>
+                `;
 
                 if (hwLines.length === 0) {
-                    rowHtml += `<td class="p-2.5 text-slate-400">-</td>`;
+                    cardHtml += `<p class="text-xs text-slate-400 text-center py-1">當前聯絡簿尚無作業項目</p>`;
                 } else {
-                    if (!student.homeworkStatus) student.homeworkStatus = {};
-                    const noteIdToUse = activeNote ? activeNote.id : 'default';
-                    if (!student.homeworkStatus[noteIdToUse]) student.homeworkStatus[noteIdToUse] = {};
-
+                    cardHtml += `<div class="space-y-2">`;
                     hwLines.forEach((line, index) => {
                         const currentStatus = student.homeworkStatus[noteIdToUse][index] || "1";
-                        rowHtml += `
-                            <td class="p-2.5">
-                                <select onchange="updateHomework('${id}', '${noteIdToUse}', ${index}, this.value)" class="px-2.5 py-1.5 rounded-lg border border-[#A3D2CA] bg-white text-xs font-bold text-[#2F4F4F] focus:ring-2 focus:ring-[#598379]">
+                        cardHtml += `
+                            <div class="flex items-center justify-between text-xs bg-[#F0F7F6] p-2 rounded-xl border border-[#A3D2CA]">
+                                <span class="font-medium text-[#2F4F4F] truncate max-w-[180px]">${line}</span>
+                                <select onchange="updateHomework('${id}', '${noteIdToUse}', ${index}, this.value)" class="px-2 py-1 rounded-lg border border-[#A3D2CA] bg-white text-xs font-bold text-[#2F4F4F]">
                                     <option value="1" ${currentStatus === '1' ? 'selected' : ''}>1. 繳交</option>
                                     <option value="2" ${currentStatus === '2' ? 'selected' : ''}>2. 已補交</option>
                                     <option value="3" ${currentStatus === '3' ? 'selected' : ''}>3. 未完成</option>
-                                    <option value="4" ${currentStatus === '4' ? 'selected' : ''}>4. 需訂正、補交</option>
+                                    <option value="4" ${currentStatus === '4' ? 'selected' : ''}>4. 需訂正</option>
                                     <option value="5" ${currentStatus === '5' ? 'selected' : ''}>5. 未帶回家</option>
-                                    <option value="6" ${currentStatus === '6' ? 'selected' : ''}>6. 未帶到學校</option>
+                                    <option value="6" ${currentStatus === '6' ? 'selected' : ''}>6. 未帶到校</option>
                                 </select>
-                            </td>
+                            </div>
                         `;
                     });
+                    cardHtml += `</div>`;
                 }
 
+                // 個別協助事項打字輸入框
                 const parentAssistVal = student.parentAssist || "";
-                rowHtml += `
-                    <td class="p-2.5">
-                        <input type="text" value="${parentAssistVal}" onchange="updateParentAssist('${id}', this.value)" placeholder="輸入個別協助事項..." class="w-full px-2.5 py-1.5 rounded-lg border border-[#A3D2CA] bg-white text-xs font-medium">
-                    </td>
-                `;
+                cardHtml += `
+                    <div class="pt-1">
+                        <input type="text" value="${parentAssistVal}" onchange="updateParentAssist('${id}', this.value)" placeholder="輸入需家長協助之個別事項..." class="w-full px-3 py-2 rounded-xl border border-[#A3D2CA] bg-white text-xs font-medium">
+                    </div>
+                </div>`;
 
-                const quickNoteId = activeNote ? activeNote.id : 'default';
-                rowHtml += `
-                    <td class="p-2.5 text-center space-x-1 whitespace-nowrap">
-                        <button onclick="setAllStatusForStudent('${id}', '${quickNoteId}', ${hwLines.length}, '1')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded-lg text-[10px] font-bold shadow-sm transition">全部繳交</button>
-                        <button onclick="setAllStatusForStudent('${id}', '${quickNoteId}', ${hwLines.length}, '3')" class="bg-amber-600 hover:bg-amber-700 text-white px-2 py-1 rounded-lg text-[10px] font-bold shadow-sm transition">全部未繳交</button>
-                    </td>
-                `;
-
-                rowHtml += `</tr>`;
-                tbody.innerHTML += rowHtml;
+                cardsContainer.innerHTML += cardHtml;
 
                 rosterTbody.innerHTML += `
                     <tr class="hover:bg-[#F0F7F6]">
@@ -626,7 +617,7 @@
 
         async function deleteInjury(studentId, injIndex) {
             const systemData = getSystemData();
-            if (systemData.students[studentId].injuries[injuryIndex].confirmed) {
+            if (systemData.students[studentId].injuries[injIndex].confirmed) {
                 alert("此筆傷病通知家長已經確認收到，無法刪除！");
                 return;
             }
@@ -653,6 +644,26 @@
 
             await saveSystemData(systemData);
             loadTeacherData();
+        }
+
+        async function setAllGlobalStatus(targetStatus) {
+            const systemData = getSystemData();
+            let activeNote = systemData.notesList.find(n => n.id === systemData.activeNoteId) || systemData.notesList[0] || null;
+            if (!activeNote) return;
+            const hwLines = activeNote.content ? activeNote.content.split('\n').filter(line => line.trim() !== '') : [];
+            if (hwLines.length === 0) return;
+
+            Object.keys(systemData.students).forEach(id => {
+                if (!systemData.students[id].homeworkStatus) systemData.students[id].homeworkStatus = {};
+                if (!systemData.students[id].homeworkStatus[activeNote.id]) systemData.students[id].homeworkStatus[activeNote.id] = {};
+                hwLines.forEach((_, index) => {
+                    systemData.students[id].homeworkStatus[activeNote.id][index] = targetStatus;
+                });
+            });
+
+            await saveSystemData(systemData);
+            loadTeacherData();
+            alert("已將全班作業狀態設定為全部繳交！");
         }
 
         function loadTeacherNotesManager() {
