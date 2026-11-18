@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 強制破除手機瀏覽器快取 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>班級 - 教師管理後台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background-color: #E6F4F1; font-family: system-ui, -apple-system, sans-serif; color: #2F4F4F; -webkit-tap-highlight-color: transparent; }
         .soft-card { background-color: #FFFFFF; border: 2px solid #A3D2CA; border-radius: 20px; box-shadow: 0 4px 12px rgba(47, 79, 79, 0.05); }
-        .soft-header { background-color: #F0F7F6; border-bottom: 2px solid #A3D2CA; border-top-left-radius: 18px; border-top-right-radius: 18px; }
         button, select, input { min-height: 44px; }
     </style>
 </head>
@@ -36,7 +39,7 @@
                     <input type="password" id="teacher-pass" class="w-full px-4 py-3 rounded-xl border-2 border-[#A3D2CA] bg-[#F0F7F6] outline-none focus:ring-2 focus:ring-[#598379] font-medium text-sm" placeholder="請輸入密碼">
                 </div>
                 <div class="flex items-center pt-1">
-                    <input type="checkbox" id="remember-me" class="w-5 h-5 text-[#598379] rounded border-[#A3D2CA]">
+                    <input type="checkbox" id="remember-me" class="w-5 h-5 text-[#598379] rounded border-[#A3D2CA] min-h-0">
                     <label for="remember-me" class="ml-2 text-[#2F4F4F] font-bold text-xs">記住我 (帳號與密碼)</label>
                 </div>
                 <button onclick="directLogin()" class="w-full bg-[#598379] hover:bg-[#4A6B63] text-white font-bold py-3.5 rounded-xl shadow-md transition text-sm active:scale-95">
@@ -52,21 +55,28 @@
     <!-- 教師後台主介面 -->
     <div id="teacher-dashboard" class="hidden flex flex-col min-h-screen">
         <header class="bg-[#598379] text-white shadow-sm sticky top-0 z-40">
-            <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="max-w-xl mx-auto px-4 py-3 flex justify-between items-center">
                 <div class="flex items-center space-x-3">
                     <div class="bg-white/80 p-2 rounded-2xl text-[#2F4F4F] shadow-sm">
                         <i class="fa-solid fa-chalkboard-user text-base"></i>
                     </div>
                     <div>
                         <h1 class="font-bold text-sm" id="teacher-header-title">班級 • 教師溫馨後台</h1>
-                        <p class="text-[11px] text-[#E6F4F1]">手機直覺卡片式作業追蹤系統</p>
+                        <p class="text-[11px] text-[#E6F4F1]">手機直覺卡片式管理系統</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="logoutTeacher()" class="text-xs bg-[#C8E6C9] hover:bg-[#A5D6A7] text-[#2F4F4F] px-3 py-1.5 rounded-xl font-bold transition shadow-sm active:scale-95">
-                        登出後台
+                        登出
                     </button>
                 </div>
+            </div>
+            <!-- 雲端同步狀態橫幅 -->
+            <div class="bg-[#4A6B63] text-[#E6F4F1] text-[11px] px-4 py-1.5 flex justify-between items-center border-t border-white/10">
+                <span id="teacher-sync-status"><i class="fa-solid fa-circle-check text-[#C8E6C9] mr-1"></i> 已連線至雲端</span>
+                <button onclick="manualSyncTeacher()" class="min-h-0 py-0.5 px-2.5 bg-white/20 hover:bg-white/30 rounded-lg text-[11px] font-bold transition active:scale-95">
+                    <i class="fa-solid fa-arrows-rotate mr-1"></i>重新讀取雲端
+                </button>
             </div>
         </header>
 
@@ -80,14 +90,14 @@
 
             <!-- 1. 作業狀態管理（卡片式清單設計） -->
             <div id="section-homework" class="space-y-4">
-                <div class="soft-card p-4 flex justify-between items-center bg-[#F0F7F6]">
+                <div class="soft-card p-4 flex justify-between items-center gap-2 bg-[#F0F7F6]">
                     <div>
                         <h2 class="font-bold text-[#2F4F4F] text-xs flex items-center gap-1.5">
-                            <i class="fa-solid fa-list-check text-[#598379]"></i> 登記作業繳交狀態
+                            <i class="fa-solid fa-list-check text-[#598379]"></i> 登記昨天作業繳交狀態
                         </h2>
-                        <p class="text-[11px] text-[#598379] mt-0.5" id="hw-current-date-tag">載入中...</p>
+                        <p class="text-[11px] text-[#598379] mt-0.5 font-bold" id="hw-current-date-tag">載入中...</p>
                     </div>
-                    <div>
+                    <div class="shrink-0">
                         <button onclick="setAllGlobalStatus('1')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold shadow-sm transition active:scale-95">
                             全班皆已繳交
                         </button>
@@ -98,24 +108,25 @@
                 <div id="teacher-homework-cards-container" class="space-y-3"></div>
             </div>
 
-            <!-- 2. 聯絡簿內容與管理 -->
+            <!-- 2. 聯絡簿內容與管理（含年月日小日曆） -->
             <div id="section-note" class="soft-card p-4 space-y-4 hidden">
                 <div class="space-y-3 bg-[#F0F7F6] p-4 rounded-xl border border-[#A3D2CA]">
                     <div class="flex justify-between items-center border-b border-[#A3D2CA] pb-2">
-                        <h2 class="font-bold text-[#2F4F4F] text-xs"><i class="fa-solid fa-book text-[#598379] mr-1"></i>編輯聯絡簿與預排</h2>
+                        <h2 class="font-bold text-[#2F4F4F] text-xs"><i class="fa-solid fa-book text-[#598379] mr-1"></i>發布與預排聯絡簿</h2>
                         <button onclick="prepareNewNote()" class="bg-[#598379] hover:bg-[#4A6B63] text-white px-3 py-2 rounded-lg text-xs font-bold shadow-sm transition active:scale-95">
-                            <i class="fa-solid fa-plus mr-1"></i> 新增預排
+                            <i class="fa-solid fa-plus mr-1"></i> 重設為今天
                         </button>
                     </div>
                     
                     <div class="space-y-3 text-xs">
                         <div>
-                            <label class="block font-bold text-[#2F4F4F] mb-1">📅 自訂聯絡簿日期（例如：民國 115 年 11 月 9 日 (星期一)）</label>
-                            <input type="text" id="note-date" class="w-full px-3.5 py-3 rounded-xl border border-[#A3D2CA] bg-white font-medium text-sm" placeholder="民國 115 年 11 月 9 日 (星期一)">
+                            <label class="block font-bold text-[#2F4F4F] mb-1">📅 點選聯絡簿日期（年月日小日曆）</label>
+                            <input type="date" id="note-date-picker" onchange="syncDatePreview()" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-[#A3D2CA] bg-white font-bold text-sm text-[#2F4F4F]">
+                            <p class="text-[11px] text-[#598379] font-bold mt-1 pl-1" id="note-date-preview">顯示格式：載入中...</p>
                         </div>
                         <div>
                             <label class="block font-bold text-[#2F4F4F] mb-1">聯絡簿抄寫內容（每行一項作業）</label>
-                            <textarea id="note-content" rows="4" class="w-full px-3.5 py-3 rounded-xl border border-[#A3D2CA] bg-white font-medium text-sm"></textarea>
+                            <textarea id="note-content" rows="4" placeholder="例如：&#10;1. 國文習作第 5 課&#10;2. 數學練習卷一張" class="w-full px-3.5 py-3 rounded-xl border border-[#A3D2CA] bg-white font-medium text-sm"></textarea>
                         </div>
                         <div>
                             <label class="block font-bold text-[#2F4F4F] mb-1">📢 老師提醒 / 給家長的話</label>
@@ -125,13 +136,13 @@
                             <label class="block font-bold text-[#2F4F4F] mb-1">叮嚀備註</label>
                             <input type="text" id="note-reminder" class="w-full px-3.5 py-3 rounded-xl border border-[#A3D2CA] bg-white font-medium text-sm">
                         </div>
-                        <button onclick="saveContactNote()" class="w-full bg-[#598379] hover:bg-[#4A6B63] text-white font-bold py-3.5 rounded-xl shadow-md transition text-sm active:scale-95">儲存並更新此篇聯絡簿 💛</button>
+                        <button onclick="saveContactNote()" class="w-full bg-[#598379] hover:bg-[#4A6B63] text-white font-bold py-3.5 rounded-xl shadow-md transition text-sm active:scale-95">儲存並設為家長端當前顯示 💛</button>
                     </div>
                 </div>
 
                 <div class="space-y-3 border-t border-[#A3D2CA] pt-3">
-                    <h3 class="font-bold text-[#2F4F4F] text-xs"><i class="fa-solid fa-box-archive text-[#598379] mr-1"></i>歷史與預排聯絡簿總覽</h3>
-                    <div class="space-y-2.5 max-h-60 overflow-y-auto pr-1 text-xs" id="teacher-history-notes-list"></div>
+                    <h3 class="font-bold text-[#2F4F4F] text-xs"><i class="fa-solid fa-box-archive text-[#598379] mr-1"></i>歷史與預排聯絡簿總覽（點「設為當前」可切換家長首頁）</h3>
+                    <div class="space-y-2.5 max-h-80 overflow-y-auto pr-1 text-xs" id="teacher-history-notes-list"></div>
                 </div>
             </div>
 
@@ -275,11 +286,12 @@
 
     <script>
         const CLOUD_BIN_URL = 'https://api.jsonbin.io/v3/b/65f6c82d3dcbb1b7cc342831';
-
+        const MASTER_KEY = '$2a$10$95bW31HqL48Jb8Q5Vf3d1eK7n9bW31HqL48Jb8Q5Vf3d1eK7n9bW3';
         const FIXED_TEACHER_USER = "t309";
         const FIXED_TEACHER_PASS = "0909";
 
         window.onload = async function() {
+            initTodayDatePicker();
             await syncLoadData();
             const savedUser = localStorage.getItem('ncm309_remembered_user');
             const savedPass = localStorage.getItem('ncm309_remembered_pass');
@@ -297,37 +309,110 @@
             }
         };
 
-        async function syncLoadData() {
-            try {
-                const response = await cacheBustFetch(`${CLOUD_BIN_URL}/latest`);
-                if (response.ok) {
-                    const cloudResult = await response.json();
-                    if (cloudResult && cloudResult.record) {
-                        localStorage.setItem('ncm309_school_data', JSON.stringify(cloudResult.record));
-                    }
-                }
-            } catch (e) {
-                console.log("使用本地快取資料");
+        function initTodayDatePicker() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const picker = document.getElementById('note-date-picker');
+            if (picker) {
+                picker.value = `${yyyy}-${mm}-${dd}`;
+                syncDatePreview();
             }
         }
 
-        async function cacheBustFetch(url) {
-            const separator = url.includes('?') ? '&' : '?';
-            return fetch(`${url}${separator}_t=${new Date().getTime()}`, {
-                headers: { 'X-Master-Key': '$2a$10$95bW31HqL48Jb8Q5Vf3d1eK7n9bW31HqL48Jb8Q5Vf3d1eK7n9bW3' }
-            });
+        function formatPickerDateToROC(isoDateStr) {
+            if (!isoDateStr) return getTaiwanTaipeiDateString();
+            const parts = isoDateStr.split('-');
+            const year = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10);
+            const day = parseInt(parts[2], 10);
+            const dateObj = new Date(year, month - 1, day);
+            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const rocYear = year - 1911;
+            return `民國 ${rocYear} 年 ${month} 月 ${day} 日 (${weekdays[dateObj.getDay()]})`;
+        }
+
+        function syncDatePreview() {
+            const picker = document.getElementById('note-date-picker');
+            const preview = document.getElementById('note-date-preview');
+            if (picker && preview) {
+                preview.innerText = `家長端顯示日期：${formatPickerDateToROC(picker.value)}`;
+            }
+        }
+
+        async function manualSyncTeacher() {
+            const statusEl = document.getElementById('teacher-sync-status');
+            if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-rotate fa-spin mr-1"></i> 正在讀取雲端最新資料...`;
+            await syncLoadData();
+            loadTeacherData();
+        }
+
+        async function syncLoadData() {
+            try {
+                const response = await fetch(`${CLOUD_BIN_URL}/latest?_t=${Date.now()}`, {
+                    cache: 'no-store',
+                    headers: {
+                        'X-Master-Key': MASTER_KEY,
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                if (response.ok) {
+                    const cloudResult = await response.json();
+                    // 保護機制：確認雲端回傳結構完整才寫入本機，防止覆蓋原有設定
+                    if (cloudResult && cloudResult.record && cloudResult.record.students) {
+                        localStorage.setItem('ncm309_school_data', JSON.stringify(cloudResult.record));
+                        const nowStr = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+                        const statusEl = document.getElementById('teacher-sync-status');
+                        if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-circle-check text-[#C8E6C9] mr-1"></i> 已與雲端同步 (${nowStr})`;
+                        return true;
+                    }
+                }
+            } catch (e) {
+                const statusEl = document.getElementById('teacher-sync-status');
+                if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-300 mr-1"></i> 離線模式（顯示本機資料）`;
+            }
+            return false;
+        }
+
+        function sortNotesByDate(notesList) {
+            notesList.sort((a, b) => parseDateStringForSorting(b.date) - parseDateStringForSorting(a.date));
+        }
+
+        function parseDateStringForSorting(dateStr) {
+            if (!dateStr) return 0;
+            const match = dateStr.match(/(?:民國\s*(\d+)\s*年)?\s*(\d+)\s*月\s*(\d+)\s*日/);
+            if (match) {
+                let year = match[1] ? parseInt(match[1]) + 1911 : new Date().getFullYear();
+                let month = parseInt(match[2]) - 1;
+                let day = parseInt(match[3]);
+                return new Date(year, month, day).getTime();
+            }
+            return new Date(dateStr).getTime() || 0;
         }
 
         async function saveSystemData(data) {
+            const statusEl = document.getElementById('teacher-sync-status');
+            if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-rotate fa-spin mr-1"></i> 正在儲存至雲端...`;
+
+            if (data.notesList && Array.isArray(data.notesList)) {
+                sortNotesByDate(data.notesList);
+            }
             localStorage.setItem('ncm309_school_data', JSON.stringify(data));
             try {
-                await fetch(CLOUD_BIN_URL, {
+                const res = await fetch(CLOUD_BIN_URL, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': '$2a$10$95bW31HqL48Jb8Q5Vf3d1eK7n9bW31HqL48Jb8Q5Vf3d1eK7n9bW3' },
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': MASTER_KEY },
                     body: JSON.stringify(data)
                 });
+                if (res.ok) {
+                    const nowStr = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+                    if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-[#C8E6C9] mr-1"></i> 已成功儲存至雲端 (${nowStr})`;
+                } else {
+                    if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-300 mr-1"></i> 雲端寫入異常，請稍後再試`;
+                }
             } catch (e) {
-                console.log("雲端同步失敗，已儲存於本地");
+                if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-300 mr-1"></i> 網路連線不穩，已暫存於手機`;
             }
         }
 
@@ -336,7 +421,6 @@
             const freshData = generateDefaultData();
 
             if (!data) {
-                localStorage.setItem('ncm309_school_data', JSON.stringify(freshData));
                 return freshData;
             }
 
@@ -345,11 +429,14 @@
                 if (!parsed.classInfo) parsed.classInfo = freshData.classInfo;
                 if (!parsed.notesList || parsed.notesList.length === 0) {
                     parsed.notesList = freshData.notesList;
+                } else {
+                    sortNotesByDate(parsed.notesList);
                 }
                 if (!parsed.activeNoteId && parsed.notesList.length > 0) {
                     parsed.activeNoteId = parsed.notesList[0].id;
                 }
-                if (!parsed.students || Object.keys(parsed.students).length < 25) {
+                // 保留您原有的學生名單，只有完全沒有學生資料時才使用預設值
+                if (!parsed.students || Object.keys(parsed.students).length === 0) {
                     parsed.students = freshData.students;
                 }
                 return parsed;
@@ -386,16 +473,16 @@
             const defaultId = new Date().toISOString();
             const defaultNotesList = [{
                 id: defaultId,
-                date: "民國 115 年 11 月 9 日 (星期一)",
+                date: getTaiwanTaipeiDateString(),
                 content: "1. 國文習作第 4 課完成\n2. 數學隨堂練習卷",
-                parentMessage: "本週三有戶外教學。",
-                reminder: "帶外套。"
+                parentMessage: "請準時完成作業。",
+                reminder: "帶水壺。"
             }];
 
             return { students: students, classInfo: { schoolName: "崇明國小", className: "三年九班", teacherName: "陽芯妮" }, notesList: defaultNotesList, activeNoteId: defaultId };
         }
 
-        function directLogin() {
+        async function directLogin() {
             const user = document.getElementById('teacher-user').value.trim();
             const pass = document.getElementById('teacher-pass').value.trim();
             const rememberMe = document.getElementById('remember-me').checked;
@@ -410,6 +497,7 @@
                 }
 
                 sessionStorage.setItem('ncm309_teacher_logged', 'true');
+                await syncLoadData();
 
                 document.getElementById('teacher-login-modal').classList.add('hidden');
                 document.getElementById('teacher-dashboard').classList.remove('hidden');
@@ -433,12 +521,13 @@
             document.getElementById('setting-classname').value = cInfo.className;
             document.getElementById('setting-teacher').value = cInfo.teacherName;
 
-            // 尋找當前顯示的聯絡簿，並以「昨天/上一篇」作為作業登記的對應項目
+            sortNotesByDate(systemData.notesList);
+            // 尋找當前顯示的聯絡簿，並對應「昨天的聯絡簿」作為作業登記項目
             let activeNote = systemData.notesList.find(n => n.id === systemData.activeNoteId) || systemData.notesList[0] || null;
             let activeNoteIndex = systemData.notesList.findIndex(n => n.id === (activeNote ? activeNote.id : ''));
             let yesterdayNote = (activeNoteIndex !== -1 && systemData.notesList[activeNoteIndex + 1]) ? systemData.notesList[activeNoteIndex + 1] : activeNote;
 
-            document.getElementById('hw-current-date-tag').innerText = `登記對應：${yesterdayNote ? yesterdayNote.date : '無'} 之作業`;
+            document.getElementById('hw-current-date-tag').innerText = `登記作業對應：${yesterdayNote ? yesterdayNote.date : '無'}`;
 
             const hwLines = yesterdayNote && yesterdayNote.content ? yesterdayNote.content.split('\n').filter(line => line.trim() !== '') : [];
             
@@ -473,21 +562,21 @@
                 `;
 
                 if (hwLines.length === 0) {
-                    cardHtml += `<p class="text-xs text-slate-400 text-center py-1">昨日無作業項目可供登記</p>`;
+                    cardHtml += `<p class="text-xs text-slate-400 text-center py-1">昨日聯絡簿無作業項目可供登記</p>`;
                 } else {
                     cardHtml += `<div class="space-y-2">`;
                     hwLines.forEach((line, index) => {
                         const currentStatus = student.homeworkStatus[noteIdToUse][index] || "1";
                         cardHtml += `
-                            <div class="flex items-center justify-between text-xs bg-[#F0F7F6] p-2.5 rounded-xl border border-[#A3D2CA]">
-                                <span class="font-medium text-[#2F4F4F] truncate max-w-[170px]">${line}</span>
-                                <select onchange="updateHomework('${id}', '${noteIdToUse}', ${index}, this.value)" class="px-3 py-2 rounded-xl border border-[#A3D2CA] bg-white text-xs font-bold text-[#2F4F4F]">
+                            <div class="flex items-center justify-between gap-2 text-xs bg-[#F0F7F6] p-2.5 rounded-xl border border-[#A3D2CA]">
+                                <span class="font-medium text-[#2F4F4F] break-words">${line}</span>
+                                <select onchange="updateHomework('${id}', '${noteIdToUse}', ${index}, this.value)" class="px-3 py-2 rounded-xl border border-[#A3D2CA] bg-white text-xs font-bold text-[#2F4F4F] shrink-0">
                                     <option value="1" ${currentStatus === '1' ? 'selected' : ''}>1. 繳交</option>
                                     <option value="2" ${currentStatus === '2' ? 'selected' : ''}>2. 已補交</option>
                                     <option value="3" ${currentStatus === '3' ? 'selected' : ''}>3. 未完成</option>
-                                    <option value="4" ${currentStatus === '4' ? 'selected' : ''}>4. 需訂正</option>
+                                    <option value="4" ${currentStatus === '4' ? 'selected' : ''}>4. 需訂正、補交</option>
                                     <option value="5" ${currentStatus === '5' ? 'selected' : ''}>5. 未帶回家</option>
-                                    <option value="6" ${currentStatus === '6' ? 'selected' : ''}>6. 未帶到校</option>
+                                    <option value="6" ${currentStatus === '6' ? 'selected' : ''}>6. 未帶到學校</option>
                                 </select>
                             </div>
                         `;
@@ -633,6 +722,7 @@
 
         async function setAllGlobalStatus(targetStatus) {
             const systemData = getSystemData();
+            sortNotesByDate(systemData.notesList);
             let activeNote = systemData.notesList.find(n => n.id === systemData.activeNoteId) || systemData.notesList[0] || null;
             let activeNoteIndex = systemData.notesList.findIndex(n => n.id === (activeNote ? activeNote.id : ''));
             let yesterdayNote = (activeNoteIndex !== -1 && systemData.notesList[activeNoteIndex + 1]) ? systemData.notesList[activeNoteIndex + 1] : activeNote;
@@ -663,9 +753,9 @@
                 const isActive = note.id === systemData.activeNoteId;
                 listContainer.innerHTML += `
                     <div class="p-3.5 ${isActive ? 'bg-[#D8E8E5] border-[#598379]' : 'bg-[#F0F7F6] border-[#A3D2CA]'} rounded-xl border text-xs space-y-2">
-                        <div class="font-bold text-[#2F4F4F] flex justify-between items-center">
-                            <span>${isActive ? '📌 【當前顯示】' : '📜'} (${note.date})</span>
-                            <div class="flex gap-1.5">
+                        <div class="font-bold text-[#2F4F4F] flex justify-between items-center gap-2">
+                            <span>${isActive ? '📌 【當前顯示】' : '📜'} ${note.date}</span>
+                            <div class="flex gap-1.5 shrink-0">
                                 ${!isActive ? `<button onclick="setActiveNote('${note.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-xl text-[11px] font-bold active:scale-95">設為當前</button>` : ''}
                                 <button onclick="deleteNote('${note.id}')" class="bg-rose-100 hover:bg-rose-200 text-rose-700 px-2.5 py-1.5 rounded-xl text-[11px] font-bold active:scale-95">刪除</button>
                             </div>
@@ -703,11 +793,11 @@
         }
 
         function prepareNewNote() {
-            document.getElementById('note-date').value = getTaiwanTaipeiDateString();
+            initTodayDatePicker();
             document.getElementById('note-content').value = "";
             document.getElementById('note-parent-message').value = "";
             document.getElementById('note-reminder').value = "";
-            alert("已準備好發布新的一天聯絡簿！");
+            alert("已將日期重設為今天並清空欄位！");
         }
 
         async function updateHomework(studentId, noteId, hwIndex, newStatus) {
@@ -721,7 +811,8 @@
         async function saveContactNote() {
             const systemData = getSystemData();
             const contentVal = document.getElementById('note-content').value.trim();
-            const rawDateVal = document.getElementById('note-date').value.trim();
+            const pickerVal = document.getElementById('note-date-picker').value;
+            const formattedDate = formatPickerDateToROC(pickerVal);
 
             if (!contentVal) {
                 alert("聯絡簿抄寫內容不得為空白！");
@@ -731,7 +822,7 @@
             const newId = new Date().toISOString();
             const updatedNoteData = {
                 id: newId,
-                date: rawDateVal,
+                date: formattedDate,
                 content: contentVal,
                 parentMessage: document.getElementById('note-parent-message').value,
                 reminder: document.getElementById('note-reminder').value
@@ -741,7 +832,7 @@
             systemData.activeNoteId = newId;
             
             await saveSystemData(systemData);
-            alert(`聯絡簿已成功發布並設為當前顯示！`);
+            alert(`聯絡簿（${formattedDate}）已成功發布並設為當前顯示！`);
             loadTeacherData();
         }
 
